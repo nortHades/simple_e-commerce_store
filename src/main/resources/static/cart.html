@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="css/styles.css"> <style>
+    #cart-items table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    #cart-items th, #cart-items td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: left;
+    }
+    #cart-items th {
+        background-color: #f2f2f2;
+    }
+    #cart-total {
+        margin-top: 20px;
+        font-size: 1.2em;
+        font-weight: bold;
+    }
+    .cart-item-image {
+        max-width: 50px; /* Small image in cart */
+        height: auto;
+    }
+</style>
+</head>
+<body>
+<h1>Your Shopping Cart</h1>
+<a href="index.html">&lt; Continue Shopping</a>
+<hr>
+
+<div id="cart-items">
+    Loading cart...
+</div>
+
+<div id="cart-total">
+</div>
+
+<script src="js/cart.js"></script>
+</body>
+</html>
