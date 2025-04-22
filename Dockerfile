@@ -1,5 +1,5 @@
 # Step 1: Base Image - Choose the Java version your project needs
-FROM eclipse-temurin:21-jdk-slim as builder
+FROM eclipse-temurin:21-jdk as builder
 
 # Step 2: Set Working Directory inside the container
 WORKDIR /app
