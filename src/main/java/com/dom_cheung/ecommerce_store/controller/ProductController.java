@@ -15,12 +15,12 @@ public class ProductController {
     @Autowired // generate entities of productRepository
     private ProductRepository productRepository;
 
-    @GetMapping //deal with HTTP getting
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();//return all the products in the productRepo
-    }
+//    @GetMapping //deal with HTTP getting
+//    public List<Product> getAllProducts() {
+//        return productRepository.findAll();//return all the products in the productRepo
+//    }
 
-    @PostMapping("/create") //<<< Annotation for handling HTTP POST requests to /api/products
+    @PostMapping //<<< Annotation for handling HTTP POST requests to /api/products
     public ResponseEntity<Product> createProduct(@RequestBody Product product){
         //@RequestBody tells Spring to take the JSON sent in the request body
         // and automatically convert it into a Product object.
