@@ -17,33 +17,27 @@ public class ProductController {
 
     @GetMapping //deal with HTTP getting
     public List<Product> getAllProducts() {
-        System.out.println("====== METHOD CALLED: getAllProducts ======"); //
         return productRepository.findAll();//return all the products in the productRepo
     }
 
-    @PostMapping //<<< Annotation for handling HTTP POST requests to /api/products
-    public ResponseEntity<String> createProduct(/*@RequestBody Product product*/){
+    @PostMapping("/create") //<<< Annotation for handling HTTP POST requests to /api/products
+    public ResponseEntity<Product> createProduct(@RequestBody Product product){
         //@RequestBody tells Spring to take the JSON sent in the request body
         // and automatically convert it into a Product object.
-        System.out.println("====== METHOD CALLED: createProduct (TESTING WITHOUT BODY) ======");
-        return new ResponseEntity<>("POST request reached createProduct method!", HttpStatus.OK);
-//        System.out.println("====== METHOD CALLED: createProduct ======"); //
-//        System.out.println("====== RECEIVED PRODUCT DATA: " + product.toString() + " ======");
-//        try
-//        {
-//            // The save() method returns the saved entity (possibly with generated ID)
-//            //insert into table products
-//            Product savedProduct = productRepository.save(product);
-//            System.out.println("====== SAVED PRODUCT: " + savedProduct.toString() + " ======");
-//            //return the new response entity with saved product
-//            return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
-//        }
-//        catch(Exception e)
-//        {
-//            System.err.println("====== ERROR in createProduct: " + e.getMessage() + " ======");
-//            System.err.println(e.getMessage());//error with creating products
-//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
+        System.out.println("====== METHOD CALLED: createProduct (ORIGINAL VERSION) ======");
+        try
+        {
+            // The save() method returns the saved entity (possibly with generated ID)
+            //insert into table products
+            Product savedProduct = productRepository.save(product);
+            //return the new response entity with saved product
+            return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
+        }
+        catch(Exception e)
+        {
+            System.err.println(e.getMessage());//error with creating products
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/{id}") // <<< Annotation for handling GET requests to /api/products/{id}
