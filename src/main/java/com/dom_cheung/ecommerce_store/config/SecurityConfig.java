@@ -54,7 +54,7 @@ public class SecurityConfig {
                 .formLogin(formLogin ->
                         formLogin
                                 .loginPage("/login") // Specifies the URL of the login page (Spring provides a default if no custom page)
-                                .successHandler(customAuthenticationSuccessHandler) // Use custom handler for redirection after login
+//                                .successHandler(customAuthenticationSuccessHandler) // Use custom handler for redirection after login
                                 .permitAll() // Allow everyone to access the login page itself
                 )
                 // --- Logout Configuration ---
