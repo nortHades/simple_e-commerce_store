@@ -1,0 +1,139 @@
+/* File: src/main/resources/static/css/admin-styles.css */
+body.admin-page { /* You can add this class to body in admin-dashboard.html if needed */
+    background-color: #f0f2f5; /* Slightly different background for admin */
+}
+
+.admin-header {
+    background-color: #343a40; /* Darker header for admin */
+    color: white;
+}
+
+.admin-header h1 {
+    color: white;
+}
+
+.admin-header .nav-link,
+.admin-header .nav-button {
+    color: #f8f9fa; /* Light link color for dark header */
+}
+.admin-header .nav-link:hover,
+.admin-header .nav-button:hover {
+    color: #B5EAEA; /* Your accent color on hover */
+}
+.admin-header .logout-button {
+    background-color: #c82333; /* Darker red */
+    border-color: #bd2130;
+}
+.admin-header .logout-button:hover {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+
+.admin-container {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+#product-management h2, #product-management h3 {
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.admin-button, .form-actions button {
+    background-color: #B5EAEA; /* Your main accent */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.95em;
+    margin-right: 10px;
+    transition: background-color 0.2s ease;
+}
+.admin-button:hover, .form-actions button:hover {
+    background-color: #9FD8D8; /* Darker main accent */
+}
+.admin-button.delete-button, .admin-button.cancel-button {
+    background-color: #6c757d; /* Secondary/gray button */
+}
+.admin-button.delete-button:hover, .admin-button.cancel-button:hover {
+    background-color: #5a6268;
+}
+.admin-button.delete-button { /* More specific for delete if needed */
+    background-color: #F38BA0; /* Your stronger accent for delete */
+}
+.admin-button.delete-button:hover {
+    background-color: #E07A8D;
+}
+
+
+.form-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.form-container div {
+    margin-bottom: 15px;
+}
+
+.form-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #555;
+}
+
+.form-container input[type="text"],
+.form-container input[type="number"],
+.form-container input[type="url"],
+.form-container textarea,
+.form-container input[type="file"] {
+    width: calc(100% - 22px); /* Full width minus padding and border */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+.form-container textarea {
+    resize: vertical;
+}
+
+.form-actions {
+    margin-top: 20px;
+    text-align: right;
+}
+
+#admin-product-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+#admin-product-table th, #admin-product-table td {
+    border: 1px solid #ddd;
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+#admin-product-table th {
+    background-color: #EDF6E5; /* Your secondary background */
+    font-weight: 600;
+}
+
+.admin-product-thumbnail {
+    max-width: 60px;
+    max-height: 60px;
+    height: auto;
+    border-radius: 4px;
+    border: 1px solid #eee;
+}
