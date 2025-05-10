@@ -1,20 +1,339 @@
-/* Basic styling for product cards */
+/* General Body Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #EDF6E5; /* Primary Background */
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Main Content Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header Styles */
+.site-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: #fff;
+    border-bottom: 2px solid #B5EAEA; /* Main Accent */
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.site-header h1 {
+    margin: 0;
+    font-size: 1.7em;
+    color: #333;
+    font-weight: 600;
+}
+
+/* Navigation Styles */
+.main-nav {
+    display: flex;
+    align-items: center;
+}
+
+.nav-link {
+    margin-left: 25px;
+    text-decoration: none;
+    color: #555;
+    font-size: 1em;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover,
+.nav-link:focus {
+    color: #B5EAEA; /* Main Accent */
+    text-decoration: none;
+}
+
+/* Button-like styles for login/logout */
+.nav-button {
+    padding: 8px 18px;
+    border: 1px solid #B5EAEA; /* Main Accent */
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#login-link.nav-button {
+    background-color: #B5EAEA; /* Main Accent */
+    color: #fff;
+    border-color: #B5EAEA;
+}
+
+#login-link.nav-button:hover,
+#login-link.nav-button:focus {
+    background-color: #9FD8D8; /* Darker Main Accent */
+    border-color: #9FD8D8;
+    color: white;
+}
+
+.logout-button { /* Style for a potential logout button */
+    background-color: #F38BA0; /* Strong Accent/Warning */
+    color: white;
+    border-color: #F38BA0;
+}
+
+.logout-button:hover,
+.logout-button:focus {
+    background-color: #E07A8D; /* Darker Strong Accent */
+    border-color: #E07A8D;
+}
+
+/* Product List Styles */
 .product-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 1em;
+    gap: 25px;
+    padding: 0 10px; /* Adjusted to match overall container or remove if .container handles padding */
+    justify-content: center;
 }
 
 .product-card {
-    border: 1px solid #ccc;
-    padding: 1em;
-    width: 200px; /* Adjust as needed */
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 20px;
+    width: 280px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+    background-color: #fff;
+    text-align: left;
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
+
+.product-card a {
+    text-decoration: none;
+    color: inherit;
 }
 
 .product-card img {
-    max-width: 100%;
-    height: auto;
-    margin-bottom: 0.5em;
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    background-color: #EDF6E5; /* Secondary Background for image placeholder area */
 }
 
-/* Add any other styles here later */
+.product-card h3 {
+    font-size: 1.25em;
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.product-card p { /* Assuming this is for price */
+    font-size: 1.1em;
+    color: #B5EAEA; /* Main Accent for price */
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+
+.cart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.cart-header h2 {
+    margin: 0;
+    font-size: 1.6em;
+    color: #333;
+}
+
+.continue-shopping-link { /* Class for "< Continue Shopping" */
+    font-weight: 500;
+}
+
+.cart-divider, .detail-divider { /* For <hr> elements */
+    border: 0;
+    border-top: 1px solid #e0e0e0;
+    margin: 20px 0;
+}
+
+#cart-items table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+#cart-items th, #cart-items td {
+    border: 1px solid #e0e0e0;
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+#cart-items th {
+    background-color: #EDF6E5; /* Secondary Background for table header */
+    color: #333;
+    font-weight: 600;
+}
+
+.cart-item-image {
+    max-width: 60px;
+    height: auto;
+    border-radius: 4px;
+}
+
+#cart-items td button {
+    padding: 5px 10px;
+    margin-right: 5px;
+    border: 1px solid #B5EAEA; /* Main Accent */
+    background-color: #fff;
+    color: #B5EAEA; /* Main Accent */
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#cart-items td button:hover {
+    background-color: #B5EAEA; /* Main Accent */
+    color: #fff;
+}
+
+/* Example for a specific remove button, could use your other accent colors */
+#cart-items td button.remove-button {
+    border-color: #F38BA0; /* Strong Accent/Warning */
+    color: #F38BA0; /* Strong Accent/Warning */
+}
+#cart-items td button.remove-button:hover {
+    background-color: #F38BA0; /* Strong Accent/Warning */
+    color: #fff;
+}
+
+#cart-total {
+    margin-top: 20px;
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #333;
+    text-align: right;
+}
+
+
+
+.product-navigation {
+    margin-bottom: 15px;
+}
+
+.back-to-products-link { /* Class for "< Back to Products" */
+    font-weight: 500;
+}
+
+.product-detail { /* Container for product image and info */
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    background-color: #fff; /* White background for the detail section */
+    padding: 20px;
+    border-radius: 6px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+}
+
+.product-detail img {
+    max-width: 100%;
+    flex: 1 1 350px; /* Allow image to take space, basis of 350px */
+    object-fit: contain;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 10px;
+    background-color: #f9f9f9; /* Light background for image itself */
+    align-self: flex-start; /* Align image to the top if info is taller */
+}
+
+.product-detail .product-info { /* Container for text details next to image */
+    flex: 2 1 300px; /* Takes more space, basis of 300px */
+}
+
+.product-detail h2 { /* Product name in detail view */
+    font-size: 2em;
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #333;
+    font-weight: 600;
+}
+
+.product-detail p { /* For description or other text */
+    margin-bottom: 15px;
+    line-height: 1.7;
+    color: #555;
+}
+
+.product-detail .price { /* Specific class for price in detail view */
+    font-size: 1.6em;
+    font-weight: bold;
+    color: #B5EAEA; /* Main Accent */
+    margin-bottom: 25px;
+}
+
+#add-to-cart-btn { /* Styling for the add to cart button */
+    padding: 12px 30px;
+    font-size: 1.1em;
+    background-color: #B5EAEA; /* Main Accent */
+    color: #fff;
+    border: 1px solid #B5EAEA; /* Main Accent */
+}
+#add-to-cart-btn:hover {
+    background-color: #9FD8D8; /* Darker Main Accent */
+    border-color: #9FD8D8;
+}
+
+/* General Link Styles (if not covered by .nav-link) */
+a {
+    color: #007bff; /* Default blue for other links for now, can change to #B5EAEA */
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+    color: #0056b3; /* Darker blue, can change to #9FD8D8 */
+}
+
+/* Basic Button Styling (can be used for other general buttons) */
+button, input[type="button"], input[type="submit"] {
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    border: 1px solid #B5EAEA; /* Main Accent */
+    background-color: #B5EAEA; /* Main Accent */
+    color: #fff;
+    font-size: 1em;
+}
+button:hover, input[type="button"]:hover, input[type="submit"]:hover {
+    background-color: #9FD8D8; /* Darker Main Accent */
+    border-color: #9FD8D8;
+}
+
+/* Footer Styles */
+.site-footer {
+    text-align: center;
+    padding: 25px 20px;
+    margin-top: 40px;
+    background-color: #333; /* Dark Gray for footer */
+    color: #EDF6E5; /* Lightest color for footer text */
+}
+
+.site-footer p {
+    margin: 0;
+    font-size: 0.9em;
+}
