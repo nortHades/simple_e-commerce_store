@@ -1,0 +1,71 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login/Register - Simple E-commerce</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon_io/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_io/favicon-16x16.png">
+    <link rel="manifest" href="/images/favicon_io/site.webmanifest">
+    <script src="js/auth.js" defer></script>
+</head>
+<body>
+<header class="site-header">
+    <h1>Simple E-commerce</h1>
+    <nav class="main-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="cart.html" class="nav-link">View Cart</a>
+    </nav>
+</header>
+
+<main class="container auth-container">
+    <div class="auth-tabs">
+        <button class="auth-tab active" id="login-tab">Login</button>
+        <button class="auth-tab" id="register-tab">Register</button>
+    </div>
+
+    <!-- Login Form -->
+    <div class="auth-form-container" id="login-form">
+        <form id="login-form-element">
+            <div class="form-group">
+                <label for="login-username">Username</label>
+                <input type="text" id="login-username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" name="password" required>
+            </div>
+            <div class="form-message" id="login-message"></div>
+            <button type="submit" class="auth-button">Login</button>
+        </form>
+    </div>
+
+    <!-- Register Form -->
+    <div class="auth-form-container" id="register-form" style="display: none;">
+        <form id="register-form-element">
+            <div class="form-group">
+                <label for="register-username">Username</label>
+                <input type="text" id="register-username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="register-password">Password</label>
+                <input type="password" id="register-password" name="password" required minlength="6">
+            </div>
+            <div class="form-group">
+                <label for="register-confirm-password">Confirm Password</label>
+                <input type="password" id="register-confirm-password" name="confirmPassword" required minlength="6">
+            </div>
+            <div class="form-message" id="register-message"></div>
+            <button type="submit" class="auth-button">Register</button>
+        </form>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <p>&copy; 2025 Simple E-commerce Store. All rights reserved.</p>
+</footer>
+</body>
+</html>
