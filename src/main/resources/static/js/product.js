@@ -64,42 +64,105 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error fetching product details:', error);
             productDetailDiv.innerHTML = `<p>Error loading product details: ${error}.</p>`;
         });
+    // Update navigation bar
+    updateNavigation();
 
-    function handleAddToCart() {
-        if (!currentProduct) {
-            console.error("Product details not loaded yet.");
-            return;
-        }
 
-        console.log("Adding to cart:", currentProduct.name);
-        //get the current cart from localStorage
-        //convert the local string to JSON
-        let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-
-        //check if the item if the current product is existing in the cart now
-        const existingProductIndex = cart.findIndex(item => item.id === currentProduct.id);
-
-        if (existingProductIndex > -1) {
-            // Product exists, increment quantity
-            cart[existingProductIndex].quantity += 1;
-            console.log("Increased quantity for:", currentProduct.name);
-        } else {
-            // Product not in cart, add it with quantity 1
-            cart.push({
-                id: currentProduct.id,
-                name: currentProduct.name,
-                price: currentProduct.price,
-                imageUrl: currentProduct.imageUrl, // Store image too
-                quantity: 1
-            });
-        }
-
-        console.log("Added new item:", currentProduct.name);
-
-        //turn the JSON back to String
-        localStorage.setItem('shoppingCart', JSON.stringify(cart));
-
-        alert(`${currentProduct.name} added to cart!`);
-    }
 
 });
+
+function handleAddToCart() {
+    if (!currentProduct) {
+        console.error("Product details not loaded yet.");
+        return;
+    }
+
+    console.log("Adding to cart:", currentProduct.name);
+    // Get current cart
+    let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+
+    // Check if already in cart
+    const existingProductIndex = cart.findIndex(item => item.id === currentProduct.id);
+
+    if (existingProductIndex > -1) {
+        // Product exists, increment quantity
+        cart[existingProductIndex].quantity += 1;
+        console.log("Increased quantity for:", currentProduct.name);
+    } else {
+        // Product not in cart, add it
+        cart.push({
+            id: currentProduct.id,
+            name: currentProduct.name,
+            price: currentProduct.price,
+            imageUrl: currentProduct.imageUrl,
+            quantity: 1
+        });
+        console.log("Added new item:", currentProduct.name);
+    }
+
+    // Save to localStorage
+    localStorage.setItem('shoppingCart', JSON.stringify(cart));
+
+    // If user is logged in, sync cart to server
+    const authToken = localStorage.getItem('authToken');
+    if (authToken) {
+        syncCartWithServer(cart);
+    }
+
+    alert(`${currentProduct.name} added to cart!`);
+}
+
+//update navigation function
+function updateNavigation() {
+    const loginLink = document.getElementById('login-link');
+    const authToken = localStorage.getItem('authToken');
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+    if (authToken && currentUser) {
+        // User is logged in, show username and logout button
+        loginLink.textContent = `${currentUser.username} (Logout)`;
+        loginLink.classList.add('logout-button');
+        loginLink.href = '#';
+        loginLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Clear stored authentication information
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('currentUser');
+            // Refresh the page
+            window.location.reload();
+        });
+    } else {
+        // User is not logged in, show login link
+        loginLink.textContent = 'Login';
+        loginLink.classList.remove('logout-button');
+        loginLink.href = 'login.html';
+
+        // Remove any existing click event listeners
+        const newLoginLink = loginLink.cloneNode(true);
+        loginLink.parentNode.replaceChild(newLoginLink, loginLink);
+    }
+}
+
+// Add cart synchronization function
+function syncCartWithServer(cart) {
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) return;
+
+    fetch('/api/users/cart', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify({ items: cart })
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to sync cart');
+            }
+            console.log('Cart synchronized with server successfully');
+        })
+        .catch(error => {
+            console.error('Error syncing cart with server:', error);
+        });
+}
