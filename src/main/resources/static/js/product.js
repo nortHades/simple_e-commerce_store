@@ -1,18 +1,22 @@
+// Declare variable globally so it's accessible in all functions
+let currentProduct = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     const productDetailDiv = document.getElementById('product-detail');
 
-    //get Id
+    // Get product ID from URL parameters
     const params = new URLSearchParams(window.location.search);
     const productId = params.get('id');
-
-    let currentProduct = null;// hold the product
 
     if (productId === null) {
         productDetailDiv.innerHTML = '<p>Product ID not found in URL.</p>';
         return;
     }
 
-    //get data for specific product
+    // Update navigation bar
+    updateNavigation();
+
+    // Fetch data for the specific product
     fetch(`api/products/${productId}`)
         .then(response => {
             if (response.status === 404) {
@@ -22,66 +26,63 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            //parse the json
+            // Parse JSON response
             return response.json();
         })
         .then(product => {
-            //store the current product
+            // Store the current product in global variable
             currentProduct = product;
+            console.log("Product loaded:", product.name);
 
             productDetailDiv.innerHTML = '';
 
-            //create the element and append img
+            // Create and append product image
             const productImage = document.createElement('img');
             productImage.src = product.imageUrl || 'images/placeholder.png';
             productImage.alt = product.name;
             productDetailDiv.appendChild(productImage);
 
-            //Name
+            // Product name
             const productName = document.createElement('h2');
             productName.textContent = product.name;
             productDetailDiv.appendChild(productName);
 
-            //description
+            // Product description
             const productDescription = document.createElement('p');
             productDescription.textContent = product.description || 'No description available.';
             productDetailDiv.appendChild(productDescription);
 
+            // Product price
             const productPrice = document.createElement('p');
             productPrice.style.fontWeight = 'bold';
             productPrice.textContent = `$${product.price.toFixed(2)}`;
             productDetailDiv.appendChild(productPrice);
 
-            //add the button
+            // Add to cart button
             const addToCartButton = document.createElement('button');
-            addToCartButton.id = 'add-to-cart-btn'; // Use the ID from HTML if button already exists there, otherwise set it here
+            addToCartButton.id = 'add-to-cart-btn';
             addToCartButton.textContent = 'Add to Cart';
-            addToCartButton.addEventListener('click', handleAddToCart); // Add event listener
+            addToCartButton.addEventListener('click', handleAddToCart);
             productDetailDiv.appendChild(addToCartButton);
-
         })
         .catch(error => {
             console.error('Error fetching product details:', error);
             productDetailDiv.innerHTML = `<p>Error loading product details: ${error}.</p>`;
         });
-    // Update navigation bar
-    updateNavigation();
-
-
-
 });
 
 function handleAddToCart() {
     if (!currentProduct) {
         console.error("Product details not loaded yet.");
+        alert("Unable to add to cart. Product information is not available.");
         return;
     }
 
     console.log("Adding to cart:", currentProduct.name);
-    // Get current cart
+    // Get current cart from localStorage
     let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
 
-    // Check if already in cart
+    // Check if product already exists in cart
     const existingProductIndex = cart.findIndex(item => item.id === currentProduct.id);
 
     if (existingProductIndex > -1) {
@@ -112,38 +113,68 @@ function handleAddToCart() {
     alert(`${currentProduct.name} added to cart!`);
 }
 
-//update navigation function
+// Navigation update function
 function updateNavigation() {
-    const loginLink = document.getElementById('login-link');
-    const authToken = localStorage.getItem('authToken');
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    try {
+        console.log("Updating navigation");
+        const loginLink = document.getElementById('login-link');
+        if (!loginLink) {
+            console.error("Login link element not found!");
+            return;
+        }
 
-    if (authToken && currentUser) {
-        // User is logged in, show username and logout button
-        loginLink.textContent = `${currentUser.username} (Logout)`;
-        loginLink.classList.add('logout-button');
-        loginLink.href = '#';
-        loginLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            // Clear stored authentication information
-            localStorage.removeItem('authToken');
+        const authToken = localStorage.getItem('authToken');
+        let currentUser = null;
+
+        try {
+            const currentUserStr = localStorage.getItem('currentUser');
+            if (currentUserStr) {
+                currentUser = JSON.parse(currentUserStr);
+                console.log("Current user:", currentUser.username);
+            }
+        } catch (e) {
+            console.error("Error parsing currentUser JSON:", e);
             localStorage.removeItem('currentUser');
-            // Refresh the page
-            window.location.reload();
-        });
-    } else {
-        // User is not logged in, show login link
-        loginLink.textContent = 'Login';
-        loginLink.classList.remove('logout-button');
-        loginLink.href = 'login.html';
+        }
 
-        // Remove any existing click event listeners
-        const newLoginLink = loginLink.cloneNode(true);
-        loginLink.parentNode.replaceChild(newLoginLink, loginLink);
+        if (authToken && currentUser) {
+            console.log("User is logged in, updating UI");
+            // User is logged in, show username and logout button
+            loginLink.textContent = `${currentUser.username} (Logout)`;
+            loginLink.classList.add('logout-button');
+            loginLink.href = '#';
+
+            // Create new link to remove existing event listeners
+            const newLoginLink = loginLink.cloneNode(true);
+            newLoginLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log("Logout clicked");
+                // Clear stored authentication information
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('currentUser');
+                // Refresh the page
+                window.location.reload();
+            });
+
+            // Replace old link with the new one
+            loginLink.parentNode.replaceChild(newLoginLink, loginLink);
+        } else {
+            console.log("User is NOT logged in, showing login link");
+            // User is not logged in, show login link
+            loginLink.textContent = 'Login';
+            loginLink.classList.remove('logout-button');
+            loginLink.href = 'login.html';
+
+            // Make sure we don't have any click handlers
+            const newLoginLink = loginLink.cloneNode(true);
+            loginLink.parentNode.replaceChild(newLoginLink, loginLink);
+        }
+    } catch (error) {
+        console.error("Error in updateNavigation:", error);
     }
 }
 
-// Add cart synchronization function
+// Cart synchronization function
 function syncCartWithServer(cart) {
     const authToken = localStorage.getItem('authToken');
     if (!authToken) return;
