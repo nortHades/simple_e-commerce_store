@@ -1,4 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
+    try {
+        console.log("Cart.js DOM loaded");
+        console.log("Auth token:", localStorage.getItem('authToken'));
+        console.log("Current user:", localStorage.getItem('currentUser'));
+
+        // First thing - update navigation
+        updateNavigation();
+
+        // Then load cart data
+        loadCartData();
+    } catch (error) {
+        console.error("Error during cart.js initialization:", error);
+    }
+});
+
+function loadCartData() {
     const cartItemsDiv = document.getElementById('cart-items');
     const cartTotalDiv = document.getElementById('cart-total');
 
@@ -42,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const row = document.createElement('tr');
 
         const imageCell = document.createElement('td');
-        imageCell.innerHTML = `<img src="${item.imageUrl || '../images/placeholder.png'}" alt="${item.name}" class="cart-item-image">`;
+        imageCell.innerHTML = `<img src="${item.imageUrl || 'images/placeholder.png'}" alt="${item.name}" class="cart-item-image">`;
         row.appendChild(imageCell);
 
         const nameCell = document.createElement('td');
@@ -96,9 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Display the overall total
     cartTotalDiv.innerHTML = `Overall Total: $${overallTotal.toFixed(2)}`;
 
-    // Update navigation bar
-    updateNavigation();
-
     // Check if user is logged in, if so get cart from server
     const authToken = localStorage.getItem('authToken');
     if (authToken) {
@@ -131,7 +144,72 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Error fetching cart from server:', error);
             });
     }
-});
+}
+
+function updateNavigation() {
+    try {
+        console.log("Updating navigation");
+        const loginLink = document.getElementById('login-link');
+        if (!loginLink) {
+            console.error("Login link element not found!");
+            return;
+        }
+
+        const authToken = localStorage.getItem('authToken');
+        let currentUser = null;
+
+        try {
+            const currentUserStr = localStorage.getItem('currentUser');
+            console.log("Current user string:", currentUserStr);
+            if (currentUserStr) {
+                currentUser = JSON.parse(currentUserStr);
+            }
+        } catch (e) {
+            console.error("Error parsing currentUser JSON:", e);
+            localStorage.removeItem('currentUser');
+        }
+
+        console.log("Navigation update with auth:", {
+            hasAuthToken: !!authToken,
+            currentUser
+        });
+
+        if (authToken && currentUser) {
+            console.log("User is logged in, updating UI");
+            // User is logged in, show username and logout button
+            loginLink.textContent = `${currentUser.username} (Logout)`;
+            loginLink.classList.add('logout-button');
+            loginLink.href = '#';
+
+            // Create a new link to remove existing handlers
+            const newLoginLink = loginLink.cloneNode(true);
+            newLoginLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log("Logout clicked");
+                // Clear stored authentication information
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('currentUser');
+                // Refresh the page
+                window.location.reload();
+            });
+
+            // Replace the old link with the new one
+            loginLink.parentNode.replaceChild(newLoginLink, loginLink);
+        } else {
+            console.log("User is NOT logged in, showing login link");
+            // User is not logged in, show login link
+            loginLink.textContent = 'Login';
+            loginLink.classList.remove('logout-button');
+            loginLink.href = 'login.html';
+
+            // Make sure we don't have any click handlers
+            const newLoginLink = loginLink.cloneNode(true);
+            loginLink.parentNode.replaceChild(newLoginLink, loginLink);
+        }
+    } catch (error) {
+        console.error("Error in updateNavigation:", error);
+    }
+}
 
 function updateQuantity(productId, newQuantity) {
     console.log(`Attempting to update product ${productId} quantity to ${newQuantity}`);
@@ -191,36 +269,6 @@ function removeItem(productId) {
 
     // Refresh the display
     location.reload();
-}
-
-function updateNavigation() {
-    const loginLink = document.getElementById('login-link');
-    const authToken = localStorage.getItem('authToken');
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-    if (authToken && currentUser) {
-        // User is logged in, show username and logout button
-        loginLink.textContent = `${currentUser.username} (Logout)`;
-        loginLink.classList.add('logout-button');
-        loginLink.href = '#';
-        loginLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            // Clear stored authentication information
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('currentUser');
-            // Refresh the page
-            window.location.reload();
-        });
-    } else {
-        // User is not logged in, show login link
-        loginLink.textContent = 'Login';
-        loginLink.classList.remove('logout-button');
-        loginLink.href = 'login.html';
-
-        // Remove any existing click event listeners
-        const newLoginLink = loginLink.cloneNode(true);
-        loginLink.parentNode.replaceChild(newLoginLink, loginLink);
-    }
 }
 
 // Cart synchronization function
