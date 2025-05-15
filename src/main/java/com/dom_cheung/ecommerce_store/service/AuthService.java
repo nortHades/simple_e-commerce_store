@@ -69,15 +69,20 @@ public class AuthService {
     // Parse and validate JWT token
     public Map<String, Object> validateToken(String token) {
         try {
+            System.out.println("Validating token: " + token.substring(0, Math.min(10, token.length())) + "...");
+
             Map<String, Object> claims = Jwts.parserBuilder()
                     .setSigningKey(jwtSecretKey)
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
 
+            System.out.println("Token validation successful, claims: " + claims);
             return claims;
         } catch (Exception e) {
-            throw new RuntimeException("Invalid JWT token");
+            System.err.println("Token validation failed: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Invalid JWT token: " + e.getMessage());
         }
     }
 }

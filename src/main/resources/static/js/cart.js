@@ -281,7 +281,7 @@ function syncCartWithServer(cart) {
 
     console.log("Syncing cart with token:", authToken);
 
-    // 使用完整URL
+    // fetch
     fetch('/api/users/cart', {
         method: 'POST',
         headers: {
