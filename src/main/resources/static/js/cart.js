@@ -1,13 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
     try {
         console.log("Cart.js DOM loaded");
-        console.log("Auth token:", localStorage.getItem('authToken'));
+        console.log("Auth token:", localStorage.getItem('authToken') ? "Found" : "Not found");
         console.log("Current user:", localStorage.getItem('currentUser'));
 
-        // First thing - update navigation
+        // Update navigation first
         updateNavigation();
 
-        // Then load cart data
+        // Load cart data from localStorage only
         loadCartData();
     } catch (error) {
         console.error("Error during cart.js initialization:", error);
@@ -18,7 +18,7 @@ function loadCartData() {
     const cartItemsDiv = document.getElementById('cart-items');
     const cartTotalDiv = document.getElementById('cart-total');
 
-    // Get the cart items from localStorage
+    // Get the cart items from localStorage only
     const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
 
     cartItemsDiv.innerHTML = '';
@@ -112,38 +112,7 @@ function loadCartData() {
     // Display the overall total
     cartTotalDiv.innerHTML = `Overall Total: $${overallTotal.toFixed(2)}`;
 
-    // Check if user is logged in, if so get cart from server
-    const authToken = localStorage.getItem('authToken');
-    if (authToken) {
-        // Get cart from server and merge with local
-        fetch('/api/users/cart', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${authToken}`
-            }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch cart');
-                }
-                return response.json();
-            })
-            .then(serverCart => {
-                // If server has cart data and local doesn't, use server data
-                const localCart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-
-                if (serverCart.length > 0 && localCart.length === 0) {
-                    localStorage.setItem('shoppingCart', JSON.stringify(serverCart));
-                    location.reload(); // Refresh page to display server cart
-                } else if (localCart.length > 0) {
-                    // If local has data, sync to server
-                    syncCartWithServer(localCart);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching cart from server:', error);
-            });
-    }
+    // No server synchronization
 }
 
 function updateNavigation() {
@@ -228,14 +197,8 @@ function updateQuantity(productId, newQuantity) {
     if (itemIndex > -1) {
         cart[itemIndex].quantity = newQuantity;
         console.log(`Updated quantity for product ${productId} to ${newQuantity}`);
-        // Save the cart data to localStorage
+        // Save the cart data to localStorage only
         localStorage.setItem('shoppingCart', JSON.stringify(cart));
-
-        // If user is logged in, sync to server
-        const authToken = localStorage.getItem('authToken');
-        if (authToken) {
-            syncCartWithServer(cart);
-        }
     } else {
         console.warn(`Product with ID ${productId} not found in cart for update.`);
     }
@@ -258,39 +221,9 @@ function removeItem(productId) {
         console.log(`Product with ID ${productId} removed.`);
     }
 
-    // Save the new cart
+    // Save the new cart to localStorage only
     localStorage.setItem('shoppingCart', JSON.stringify(updatedCart));
-
-    // If user is logged in, sync to server
-    const authToken = localStorage.getItem('authToken');
-    if (authToken) {
-        syncCartWithServer(updatedCart);
-    }
 
     // Refresh the display
     location.reload();
-}
-
-// Cart synchronization function
-function syncCartWithServer(cart) {
-    const authToken = localStorage.getItem('authToken');
-    if (!authToken) return;
-
-    fetch('/api/users/cart', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${authToken}`
-        },
-        body: JSON.stringify({ items: cart })
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to sync cart');
-            }
-            console.log('Cart synchronized with server successfully');
-        })
-        .catch(error => {
-            console.error('Error syncing cart with server:', error);
-        });
 }
