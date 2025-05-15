@@ -3,10 +3,10 @@ package com.dom_cheung.ecommerce_store.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -30,7 +30,6 @@ public class User {
     @Column(name = "role")
     private Set<String> roles = new HashSet<>();
 
-    // CartItem
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_id")
     private List<CartItem> cartItems = new ArrayList<>();

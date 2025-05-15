@@ -27,18 +27,18 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    // login
+    // User login endpoint
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
         String username = credentials.get("username");
         String password = credentials.get("password");
 
-        // check user name and passowrd
+        // Validate request parameters
         if (username == null || password == null) {
             return ResponseEntity.badRequest().body(Collections.singletonMap("message", "Username and password are required"));
         }
 
-        // using authservice
+        // Authenticate user
         try {
             Map<String, Object> authResponse = authService.authenticateUser(username, password);
             return ResponseEntity.ok(authResponse);
@@ -48,28 +48,28 @@ public class AuthController {
         }
     }
 
-    // user register
+    // User registration endpoint
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Map<String, String> userData) {
         String username = userData.get("username");
         String password = userData.get("password");
 
-        // auth input data
+        // Validate request parameters
         if (username == null || password == null || username.isEmpty() || password.isEmpty()) {
             return ResponseEntity.badRequest().body(Collections.singletonMap("message", "Username and password are required"));
         }
 
-        // check if exist
+        // Check if username already exists
         if (userRepository.findByUsername(username).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Collections.singletonMap("message", "Username already exists"));
         }
 
-        // create new user
+        // Create new user
         User newUser = new User();
         newUser.setUsername(username);
-        newUser.setPassword(passwordEncoder.encode(password)); // password encode
-        newUser.setRoles(Set.of("ROLE_USER")); // set as role_user
+        newUser.setPassword(passwordEncoder.encode(password));
+        newUser.setRoles(Set.of("ROLE_USER"));
         newUser.setEnabled(true);
 
         User savedUser = userRepository.save(newUser);
