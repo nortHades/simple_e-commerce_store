@@ -153,10 +153,77 @@ public class OrderService {
      * @param orderNumber Order number to update
      * @param newStatus New status to set
      * @return Updated order
+     * @throws IllegalArgumentException if status transition is not allowed
+     * @throws RuntimeException if order not found
      */
     @Transactional
     public Order updateOrderStatus(String orderNumber, OrderStatus newStatus) {
-        // Implementation will be added in a future iteration
-        throw new UnsupportedOperationException("Method not implemented yet");
+        LOGGER.info("Updating status for order: " + orderNumber + " to " + newStatus);
+
+        Optional<Order> orderOpt = orderRepository.findByOrderNumber(orderNumber);
+        if (orderOpt.isEmpty()) {
+            LOGGER.warning("Failed to update status: Order not found: " + orderNumber);
+            throw new RuntimeException("Order not found");
+        }
+
+        Order order = orderOpt.get();
+        OrderStatus currentStatus = order.getStatus();
+
+        // Validate status transition
+        if (!isValidStatusTransition(currentStatus, newStatus)) {
+            LOGGER.warning("Invalid status transition for order " + orderNumber + ": "
+                    + currentStatus + " -> " + newStatus);
+            throw new IllegalArgumentException(
+                    "Cannot change order status from " + currentStatus + " to " + newStatus);
+        }
+
+        // Update status
+        order.setStatus(newStatus);
+        Order updatedOrder = orderRepository.save(order);
+
+        LOGGER.info("Successfully updated status for order " + orderNumber + " from "
+                + currentStatus + " to " + newStatus);
+
+        return updatedOrder;
+    }
+
+    /**
+     * Check if a status transition is valid
+     *
+     * @param currentStatus Current order status
+     * @param newStatus New order status
+     * @return true if transition is valid, false otherwise
+     */
+    private boolean isValidStatusTransition(OrderStatus currentStatus, OrderStatus newStatus) {
+        // Order is already in the new status
+        if (currentStatus == newStatus) {
+            return true;
+        }
+
+        // Define valid transitions for each status
+        switch (currentStatus) {
+            case PENDING:
+                // From PENDING, can move to PROCESSING or CANCELLED
+                return newStatus == OrderStatus.PROCESSING || newStatus == OrderStatus.CANCELLED;
+
+            case PROCESSING:
+                // From PROCESSING, can move to SHIPPED or CANCELLED
+                return newStatus == OrderStatus.SHIPPED || newStatus == OrderStatus.CANCELLED;
+
+            case SHIPPED:
+                // From SHIPPED, can only move to DELIVERED
+                return newStatus == OrderStatus.DELIVERED;
+
+            case DELIVERED:
+                // Delivered is a terminal state, no further transitions allowed
+                return false;
+
+            case CANCELLED:
+                // Cancelled is a terminal state, no further transitions allowed
+                return false;
+
+            default:
+                return false;
+        }
     }
 }

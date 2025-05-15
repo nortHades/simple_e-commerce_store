@@ -59,7 +59,7 @@ public class AuthService {
         return Jwts.builder()
                 .setSubject(user.getUsername())
                 .claim("id", user.getId())
-                .claim("roles", user.getRoles())
+                .claim("roles", user.getRoles()) // Ensure roles are included in JWT
                 .setIssuedAt(now)
                 .setExpiration(expiration)
                 .signWith(jwtSecretKey)

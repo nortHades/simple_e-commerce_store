@@ -1,10 +1,10 @@
 package com.dom_cheung.ecommerce_store.config;
 
-import com.dom_cheung.ecommerce_store.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -13,8 +13,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.dom_cheung.ecommerce_store.security.JwtAuthenticationFilter;
+
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity // Enable method-level security annotations
 public class SecurityConfig {
 
     @Autowired
@@ -41,6 +44,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/users/**").authenticated()
                         // Admin APIs require ADMIN role
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        // Order status update endpoint requires ADMIN role
+                        .requestMatchers(HttpMethod.POST, "/api/orders/*/status").hasRole("ADMIN")
                         // Other requests require authentication
                         .anyRequest().authenticated()
                 )
