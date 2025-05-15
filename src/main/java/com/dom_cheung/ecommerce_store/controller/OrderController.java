@@ -104,11 +104,36 @@ public class OrderController {
      */
     @GetMapping
     public ResponseEntity<?> getUserOrders() {
-        // Implementation will be added in a future iteration
-        LOGGER.info("Get user orders endpoint called, but not yet implemented");
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
-                Map.of("message", "Get user orders not implemented yet")
-        );
+        try {
+            // Get the current authenticated user
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String username = auth.getName();
+
+            LOGGER.info("Get orders request received from user: " + username);
+
+            // Validate user exists
+            Optional<User> userOpt = userRepository.findByUsername(username);
+            if (userOpt.isEmpty()) {
+                LOGGER.warning("Unauthorized access attempt for username: " + username);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                        Map.of("message", "Unauthorized access")
+                );
+            }
+
+            User user = userOpt.get();
+
+            // Get the user's orders
+            List<Order> orders = orderService.getUserOrders(user.getId());
+
+            LOGGER.info("Successfully retrieved " + orders.size() + " orders for user: " + username);
+            return ResponseEntity.ok(orders);
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error retrieving user orders", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    Map.of("message", "An error occurred while retrieving your orders. Please try again later.")
+            );
+        }
     }
 
     /**
@@ -119,11 +144,52 @@ public class OrderController {
      */
     @GetMapping("/{orderNumber}")
     public ResponseEntity<?> getOrderDetails(@PathVariable String orderNumber) {
-        // Implementation will be added in a future iteration
-        LOGGER.info("Get order details endpoint called for order " + orderNumber + ", but not yet implemented");
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
-                Map.of("message", "Get order details not implemented yet")
-        );
+        try {
+            // Get the current authenticated user
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String username = auth.getName();
+
+            LOGGER.info("Get order details request received from user: " + username + " for order: " + orderNumber);
+
+            // Validate user exists
+            Optional<User> userOpt = userRepository.findByUsername(username);
+            if (userOpt.isEmpty()) {
+                LOGGER.warning("Unauthorized access attempt for username: " + username);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                        Map.of("message", "Unauthorized access")
+                );
+            }
+
+            User user = userOpt.get();
+
+            // Get the order
+            Optional<Order> orderOpt = orderService.getOrderByNumber(orderNumber);
+            if (orderOpt.isEmpty()) {
+                LOGGER.warning("Order not found: " + orderNumber);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                        Map.of("message", "Order not found")
+                );
+            }
+
+            Order order = orderOpt.get();
+
+            // Security check: ensure users can only view their own orders
+            if (!order.getUserId().equals(user.getId())) {
+                LOGGER.warning("User " + username + " attempted to access order " + orderNumber + " which belongs to another user");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                        Map.of("message", "You don't have permission to view this order")
+                );
+            }
+
+            LOGGER.info("Successfully retrieved order details for order: " + orderNumber);
+            return ResponseEntity.ok(order);
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error retrieving order details for order: " + orderNumber, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    Map.of("message", "An error occurred while retrieving order details. Please try again later.")
+            );
+        }
     }
 
     /**

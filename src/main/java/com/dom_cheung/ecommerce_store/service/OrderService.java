@@ -124,8 +124,10 @@ public class OrderService {
      * @return List of orders for the user
      */
     public List<Order> getUserOrders(Long userId) {
-        // Implementation will be added in a future iteration
-        return orderRepository.findByUserIdOrderByOrderDateDesc(userId);
+        LOGGER.info("Retrieving orders for user ID: " + userId);
+        List<Order> orders = orderRepository.findByUserIdOrderByOrderDateDesc(userId);
+        LOGGER.info("Found " + orders.size() + " orders for user ID: " + userId);
+        return orders;
     }
 
     /**
@@ -135,8 +137,14 @@ public class OrderService {
      * @return Optional containing the order if found
      */
     public Optional<Order> getOrderByNumber(String orderNumber) {
-        // Implementation will be added in a future iteration
-        return orderRepository.findByOrderNumber(orderNumber);
+        LOGGER.info("Retrieving order with order number: " + orderNumber);
+        Optional<Order> order = orderRepository.findByOrderNumber(orderNumber);
+        if (order.isPresent()) {
+            LOGGER.info("Order found: " + orderNumber);
+        } else {
+            LOGGER.info("Order not found: " + orderNumber);
+        }
+        return order;
     }
 
     /**
