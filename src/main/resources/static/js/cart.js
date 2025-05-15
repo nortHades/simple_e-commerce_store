@@ -282,7 +282,7 @@ function syncCartWithServer(cart) {
     console.log("Syncing cart with token:", authToken);
 
     // 使用完整URL
-    fetch('https://simplee-commercestore-production.up.railway.app/api/users/cart', {
+    fetch('/api/users/cart', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
