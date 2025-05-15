@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - Simple E-commerce</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon_io/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_io/favicon-16x16.png">
+    <link rel="manifest" href="/images/favicon_io/site.webmanifest">
+    <script src="js/order-confirmation.js" defer></script>
+</head>
+<body>
+<header class="site-header">
+    <h1>Simple E-commerce</h1>
+    <nav class="main-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="cart.html" class="nav-link">View Cart</a>
+        <a href="orders.html" class="nav-link">My Orders</a>
+        <a href="login.html" id="login-link" class="nav-link nav-button">Login</a>
+    </nav>
+</header>
+
+<main class="container">
+    <div class="order-confirmation">
+        <h3>Thank You for Your Order!</h3>
+        <div id="order-details">
+            <div class="order-number" id="order-number">
+                Loading order information...
+            </div>
+            <p>Your order has been placed successfully. You will receive a confirmation email shortly.</p>
+            <p>You can view your order details and track the status in the <a href="orders.html">My Orders</a> section.</p>
+        </div>
+        <div class="order-confirmation-actions">
+            <a href="index.html" class="nav-link">Continue Shopping</a>
+            <a href="orders.html" class="nav-link">View My Orders</a>
+        </div>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <p>&copy; 2025 Simple E-commerce Store. All rights reserved.</p>
+</footer>
+</body>
+</html>

@@ -67,13 +67,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Move shopping cart to user account
                 syncCartWithServer();
 
-                // Redirect to home page
-                window.location.href = 'index.html';
+                // Check if there's a redirect URL saved
+                const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
+                if (redirectUrl) {
+                    sessionStorage.removeItem('redirectAfterLogin');
+                    window.location.href = redirectUrl;
+                } else {
+                    // Default redirect to home page
+                    window.location.href = 'index.html';
+                }
             })
             .catch(error => {
-                console.error('Login error:', error);
-                loginMessage.textContent = 'Invalid username or password. Please try again.';
-            });
+            console.error('Login error:', error);
+            loginMessage.textContent = 'Invalid username or password. Please try again.';
+        });
     });
 
     // Register form submission
