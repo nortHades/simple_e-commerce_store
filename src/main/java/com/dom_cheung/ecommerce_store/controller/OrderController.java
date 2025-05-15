@@ -1,8 +1,9 @@
 package com.dom_cheung.ecommerce_store.controller;
 
 import com.dom_cheung.ecommerce_store.model.Order;
-import com.dom_cheung.ecommerce_store.service.OrderService;
+import com.dom_cheung.ecommerce_store.model.User;
 import com.dom_cheung.ecommerce_store.repository.UserRepository;
+import com.dom_cheung.ecommerce_store.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @RestController
@@ -36,11 +38,63 @@ public class OrderController {
      */
     @PostMapping
     public ResponseEntity<?> createOrder(@RequestBody Map<String, Object> orderRequest) {
-        // Implementation will be added in the next iteration
-        LOGGER.info("Create order endpoint called, but not yet implemented");
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
-                Map.of("message", "Order creation not implemented yet")
-        );
+        try {
+            // Get the current authenticated user
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String username = auth.getName();
+
+            LOGGER.info("Create order request received from user: " + username);
+
+            // Validate user exists
+            Optional<User> userOpt = userRepository.findByUsername(username);
+            if (userOpt.isEmpty()) {
+                LOGGER.warning("Unauthorized access attempt for username: " + username);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                        Map.of("message", "Unauthorized access")
+                );
+            }
+
+            User user = userOpt.get();
+
+            // Validate required fields
+            if (!orderRequest.containsKey("items")) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        Map.of("message", "Items are required")
+                );
+            }
+
+            String shippingAddress = orderRequest.containsKey("shippingAddress") ?
+                    (String) orderRequest.get("shippingAddress") : "";
+
+            // Get cart items from request
+            List<Map<String, Object>> cartItems = (List<Map<String, Object>>) orderRequest.get("items");
+
+            // Create the order
+            Order createdOrder = orderService.createOrder(user.getId(), cartItems, shippingAddress);
+
+            // Prepare response
+            Map<String, Object> response = new HashMap<>();
+            response.put("orderNumber", createdOrder.getOrderNumber());
+            response.put("orderDate", createdOrder.getOrderDate());
+            response.put("totalAmount", createdOrder.getTotalAmount());
+            response.put("status", createdOrder.getStatus());
+
+            LOGGER.info("Order created successfully: " + createdOrder.getOrderNumber());
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+        } catch (IllegalArgumentException e) {
+            // Handle validation errors
+            LOGGER.warning("Validation error creating order: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    Map.of("message", e.getMessage())
+            );
+        } catch (Exception e) {
+            // Handle unexpected errors
+            LOGGER.log(Level.SEVERE, "Error creating order", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    Map.of("message", "An error occurred while creating your order. Please try again later.")
+            );
+        }
     }
 
     /**
