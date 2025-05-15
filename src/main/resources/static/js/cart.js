@@ -113,32 +113,38 @@ function loadCartData() {
     cartTotalDiv.innerHTML = `Overall Total: $${overallTotal.toFixed(2)}`;
 
     // Check if user is logged in, if so get cart from server
+    // 在loadCartData函数中
     const authToken = localStorage.getItem('authToken');
     if (authToken) {
-        // Get cart from server and merge with local
+        console.log("Fetching cart with token:", authToken.substring(0, 20) + "...");
+
+        // 使用完整的请求选项
         fetch('/api/users/cart', {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${authToken}`
-            }
+                'Authorization': `Bearer ${authToken}`,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            // 添加credentials选项
+            credentials: 'same-origin'
         })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch cart');
-                }
-                return response.json();
-            })
-            .then(serverCart => {
-                // If server has cart data and local doesn't, use server data
-                const localCart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+            .then(async response => {
+                console.log("Cart API response status:", response.status);
 
-                if (serverCart.length > 0 && localCart.length === 0) {
-                    localStorage.setItem('shoppingCart', JSON.stringify(serverCart));
-                    location.reload(); // Refresh page to display server cart
-                } else if (localCart.length > 0) {
-                    // If local has data, sync to server
-                    syncCartWithServer(localCart);
+                // 尝试获取响应文本，无论成功或失败
+                const text = await response.text();
+                console.log("Response body:", text);
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch cart: ${response.status}`);
                 }
+
+                // 如果响应是空字符串，返回空数组
+                const serverCart = text ? JSON.parse(text) : [];
+                console.log("Parsed server cart:", serverCart);
+
+                // 处理服务器购物车数据...
             })
             .catch(error => {
                 console.error('Error fetching cart from server:', error);
