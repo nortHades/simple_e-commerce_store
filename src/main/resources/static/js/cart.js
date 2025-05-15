@@ -274,9 +274,15 @@ function removeItem(productId) {
 // Cart synchronization function
 function syncCartWithServer(cart) {
     const authToken = localStorage.getItem('authToken');
-    if (!authToken) return;
+    if (!authToken) {
+        console.log("No auth token found, skipping sync");
+        return;
+    }
 
-    fetch('/api/users/cart', {
+    console.log("Syncing cart with token:", authToken);
+
+    // 使用完整URL
+    fetch('https://simplee-commercestore-production.up.railway.app/api/users/cart', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -285,8 +291,12 @@ function syncCartWithServer(cart) {
         body: JSON.stringify({ items: cart })
     })
         .then(response => {
+            console.log("Sync response status:", response.status);
             if (!response.ok) {
-                throw new Error('Failed to sync cart');
+                return response.text().then(text => {
+                    console.error("Error response:", text);
+                    throw new Error('Failed to sync cart');
+                });
             }
             console.log('Cart synchronized with server successfully');
         })
