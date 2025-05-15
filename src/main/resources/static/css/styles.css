@@ -337,3 +337,86 @@ button:hover, input[type="button"]:hover, input[type="submit"]:hover {
     margin: 0;
     font-size: 0.9em;
 }
+
+/* Authentication Styles */
+.auth-container {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 25px;
+    background-color: #fff;
+    border-radius: 6px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+}
+
+.auth-tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 500;
+    color: #555;
+    transition: color 0.3s ease;
+}
+
+.auth-tab.active {
+    color: #B5EAEA;
+    border-bottom: 2px solid #B5EAEA;
+}
+
+.auth-form-container {
+    padding: 15px 0;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.form-message {
+    margin: 10px 0;
+    color: #F38BA0; /* For error messages */
+    min-height: 20px;
+}
+
+.form-message.success {
+    color: #4CAF50; /* For success messages */
+}
+
+.auth-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #B5EAEA;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.auth-button:hover {
+    background-color: #9FD8D8;
+}

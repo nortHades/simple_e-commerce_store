@@ -1,18 +1,22 @@
+// Declare variable globally so it's accessible in all functions
+let currentProduct = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     const productDetailDiv = document.getElementById('product-detail');
 
-    //get Id
+    // Get product ID from URL parameters
     const params = new URLSearchParams(window.location.search);
     const productId = params.get('id');
-
-    let currentProduct = null;// hold the product
 
     if (productId === null) {
         productDetailDiv.innerHTML = '<p>Product ID not found in URL.</p>';
         return;
     }
 
-    //get data for specific product
+    // Update navigation bar
+    updateNavigation();
+
+    // Fetch data for the specific product
     fetch(`api/products/${productId}`)
         .then(response => {
             if (response.status === 404) {
@@ -22,84 +26,174 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            //parse the json
+            // Parse JSON response
             return response.json();
         })
         .then(product => {
-            //store the current product
+            // Store the current product in global variable
             currentProduct = product;
+            console.log("Product loaded:", product.name);
 
             productDetailDiv.innerHTML = '';
 
-            //create the element and append img
+            // Create and append product image
             const productImage = document.createElement('img');
             productImage.src = product.imageUrl || 'images/placeholder.png';
             productImage.alt = product.name;
             productDetailDiv.appendChild(productImage);
 
-            //Name
+            // Product name
             const productName = document.createElement('h2');
             productName.textContent = product.name;
             productDetailDiv.appendChild(productName);
 
-            //description
+            // Product description
             const productDescription = document.createElement('p');
             productDescription.textContent = product.description || 'No description available.';
             productDetailDiv.appendChild(productDescription);
 
+            // Product price
             const productPrice = document.createElement('p');
             productPrice.style.fontWeight = 'bold';
             productPrice.textContent = `$${product.price.toFixed(2)}`;
             productDetailDiv.appendChild(productPrice);
 
-            //add the button
+            // Add to cart button
             const addToCartButton = document.createElement('button');
-            addToCartButton.id = 'add-to-cart-btn'; // Use the ID from HTML if button already exists there, otherwise set it here
+            addToCartButton.id = 'add-to-cart-btn';
             addToCartButton.textContent = 'Add to Cart';
-            addToCartButton.addEventListener('click', handleAddToCart); // Add event listener
+            addToCartButton.addEventListener('click', handleAddToCart);
             productDetailDiv.appendChild(addToCartButton);
-
         })
         .catch(error => {
             console.error('Error fetching product details:', error);
             productDetailDiv.innerHTML = `<p>Error loading product details: ${error}.</p>`;
         });
+});
 
-    function handleAddToCart() {
-        if (!currentProduct) {
-            console.error("Product details not loaded yet.");
+function handleAddToCart() {
+    if (!currentProduct) {
+        console.error("Product details not loaded yet.");
+        alert("Unable to add to cart. Product information is not available.");
+        return;
+    }
+
+    console.log("Adding to cart:", currentProduct.name);
+    // Get current cart from localStorage
+    let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+
+    // Check if product already exists in cart
+    const existingProductIndex = cart.findIndex(item => item.id === currentProduct.id);
+
+    if (existingProductIndex > -1) {
+        // Product exists, increment quantity
+        cart[existingProductIndex].quantity += 1;
+        console.log("Increased quantity for:", currentProduct.name);
+    } else {
+        // Product not in cart, add it
+        cart.push({
+            id: currentProduct.id,
+            name: currentProduct.name,
+            price: currentProduct.price,
+            imageUrl: currentProduct.imageUrl,
+            quantity: 1
+        });
+        console.log("Added new item:", currentProduct.name);
+    }
+
+    // Save to localStorage
+    localStorage.setItem('shoppingCart', JSON.stringify(cart));
+
+    // If user is logged in, sync cart to server
+    const authToken = localStorage.getItem('authToken');
+    if (authToken) {
+        syncCartWithServer(cart);
+    }
+
+    alert(`${currentProduct.name} added to cart!`);
+}
+
+// Navigation update function
+function updateNavigation() {
+    try {
+        console.log("Updating navigation");
+        const loginLink = document.getElementById('login-link');
+        if (!loginLink) {
+            console.error("Login link element not found!");
             return;
         }
 
-        console.log("Adding to cart:", currentProduct.name);
-        //get the current cart from localStorage
-        //convert the local string to JSON
-        let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+        const authToken = localStorage.getItem('authToken');
+        let currentUser = null;
 
-        //check if the item if the current product is existing in the cart now
-        const existingProductIndex = cart.findIndex(item => item.id === currentProduct.id);
-
-        if (existingProductIndex > -1) {
-            // Product exists, increment quantity
-            cart[existingProductIndex].quantity += 1;
-            console.log("Increased quantity for:", currentProduct.name);
-        } else {
-            // Product not in cart, add it with quantity 1
-            cart.push({
-                id: currentProduct.id,
-                name: currentProduct.name,
-                price: currentProduct.price,
-                imageUrl: currentProduct.imageUrl, // Store image too
-                quantity: 1
-            });
+        try {
+            const currentUserStr = localStorage.getItem('currentUser');
+            if (currentUserStr) {
+                currentUser = JSON.parse(currentUserStr);
+                console.log("Current user:", currentUser.username);
+            }
+        } catch (e) {
+            console.error("Error parsing currentUser JSON:", e);
+            localStorage.removeItem('currentUser');
         }
 
-        console.log("Added new item:", currentProduct.name);
+        if (authToken && currentUser) {
+            console.log("User is logged in, updating UI");
+            // User is logged in, show username and logout button
+            loginLink.textContent = `${currentUser.username} (Logout)`;
+            loginLink.classList.add('logout-button');
+            loginLink.href = '#';
 
-        //turn the JSON back to String
-        localStorage.setItem('shoppingCart', JSON.stringify(cart));
+            // Create new link to remove existing event listeners
+            const newLoginLink = loginLink.cloneNode(true);
+            newLoginLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log("Logout clicked");
+                // Clear stored authentication information
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('currentUser');
+                // Refresh the page
+                window.location.reload();
+            });
 
-        alert(`${currentProduct.name} added to cart!`);
+            // Replace old link with the new one
+            loginLink.parentNode.replaceChild(newLoginLink, loginLink);
+        } else {
+            console.log("User is NOT logged in, showing login link");
+            // User is not logged in, show login link
+            loginLink.textContent = 'Login';
+            loginLink.classList.remove('logout-button');
+            loginLink.href = 'login.html';
+
+            // Make sure we don't have any click handlers
+            const newLoginLink = loginLink.cloneNode(true);
+            loginLink.parentNode.replaceChild(newLoginLink, loginLink);
+        }
+    } catch (error) {
+        console.error("Error in updateNavigation:", error);
     }
+}
 
-});
+// Cart synchronization function
+function syncCartWithServer(cart) {
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) return;
+
+    fetch('/api/users/cart', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify({ items: cart })
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to sync cart');
+            }
+            console.log('Cart synchronized with server successfully');
+        })
+        .catch(error => {
+            console.error('Error syncing cart with server:', error);
+        });
+}

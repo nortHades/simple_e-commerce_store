@@ -1,20 +1,36 @@
 document.addEventListener('DOMContentLoaded', () => {
+    try {
+        console.log("Cart.js DOM loaded");
+        console.log("Auth token:", localStorage.getItem('authToken') ? "Found" : "Not found");
+        console.log("Current user:", localStorage.getItem('currentUser'));
+
+        // Update navigation first
+        updateNavigation();
+
+        // Load cart data from localStorage only
+        loadCartData();
+    } catch (error) {
+        console.error("Error during cart.js initialization:", error);
+    }
+});
+
+function loadCartData() {
     const cartItemsDiv = document.getElementById('cart-items');
     const cartTotalDiv = document.getElementById('cart-total');
 
-    //get the cart item from the localstorage
+    // Get the cart items from localStorage only
     const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
 
     cartItemsDiv.innerHTML = '';
 
-    //check the quantity of cart
+    // Check if cart is empty
     if (cart.length === 0) {
         cartItemsDiv.innerHTML = '<p>Your shopping cart is empty.</p>';
         cartTotalDiv.innerHTML = ''; // No total if cart is empty
         return;
     }
 
-    //create table for display
+    // Create table for display
     const table = document.createElement('table');
     table.innerHTML = `
     <thead>
@@ -31,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     </tbody>
     `;
 
-    //select the tbody in the table
+    // Select the tbody in the table
     const tbody = table.querySelector('tbody');
     let overallTotal = 0;
 
@@ -42,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const row = document.createElement('tr');
 
         const imageCell = document.createElement('td');
-        imageCell.innerHTML = `<img src="${item.imageUrl || '../images/placeholder.png'}" alt="${item.name}" class="cart-item-image">`;
+        imageCell.innerHTML = `<img src="${item.imageUrl || 'images/placeholder.png'}" alt="${item.name}" class="cart-item-image">`;
         row.appendChild(imageCell);
 
         const nameCell = document.createElement('td');
@@ -61,24 +77,25 @@ document.addEventListener('DOMContentLoaded', () => {
         itemTotalCell.textContent = `$${itemTotal.toFixed(2)}`;
         row.appendChild(itemTotalCell);
 
-        //add action buttion
+        // Add action buttons
         const actionsCell = document.createElement('td');
 
-        //minus button
+        // Minus button
         const minusButton = document.createElement('button');
         minusButton.textContent = '-';
         minusButton.onclick = () => updateQuantity(item.id, item.quantity - 1);
         actionsCell.appendChild(minusButton);
 
-        //add buttton
+        // Add button
         const plusButton = document.createElement('button');
         plusButton.textContent = '+';
         plusButton.onclick = () => updateQuantity(item.id, item.quantity + 1);
         actionsCell.appendChild(plusButton);
 
-        //remove
+        // Remove button
         const removeButton = document.createElement('button');
         removeButton.textContent = 'Remove';
+        removeButton.classList.add('remove-button');
         removeButton.addEventListener('click', () => {
             removeItem(item.id);
         });
@@ -92,69 +109,121 @@ document.addEventListener('DOMContentLoaded', () => {
 
     cartItemsDiv.appendChild(table);
 
-    //display the overall
+    // Display the overall total
     cartTotalDiv.innerHTML = `Overall Total: $${overallTotal.toFixed(2)}`;
 
+    // No server synchronization
+}
 
-    function updateQuantity(productId, newQuantity) {
-        console.log(`Attempting to update product ${productId} quantity to ${newQuantity}`);
-        //if the quantity less than 1, remove it
-        if (newQuantity < 1) {
-            removeItem(productId);
+function updateNavigation() {
+    try {
+        console.log("Updating navigation");
+        const loginLink = document.getElementById('login-link');
+        if (!loginLink) {
+            console.error("Login link element not found!");
             return;
         }
 
-        //get the current cart from localStorage
-        let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-        //get the item by id
-        const itemIndex = cart.findIndex(item => item.id === productId);
+        const authToken = localStorage.getItem('authToken');
+        let currentUser = null;
 
-        // if find the item, update
-        if (itemIndex > -1)
-        {
-            cart[itemIndex].quantity = newQuantity;
-            console.log(`Updated quantity for product ${productId} to ${newQuantity}`);
-            //save the cart data to localstorage
-            localStorage.setItem('shoppingCart', JSON.stringify(cart));
-        }else{
-            console.warn(`Product with ID ${productId} not found in cart for update.`);
+        try {
+            const currentUserStr = localStorage.getItem('currentUser');
+            console.log("Current user string:", currentUserStr);
+            if (currentUserStr) {
+                currentUser = JSON.parse(currentUserStr);
+            }
+        } catch (e) {
+            console.error("Error parsing currentUser JSON:", e);
+            localStorage.removeItem('currentUser');
         }
 
-        location.reload();
-    }
+        console.log("Navigation update with auth:", {
+            hasAuthToken: !!authToken,
+            currentUser
+        });
 
+        if (authToken && currentUser) {
+            console.log("User is logged in, updating UI");
+            // User is logged in, show username and logout button
+            loginLink.textContent = `${currentUser.username} (Logout)`;
+            loginLink.classList.add('logout-button');
+            loginLink.href = '#';
 
-    function removeItem(productId) {
-        //update quantity in localStorage and refresh the cart display
-        console.log(`Attempting to remove product with ID: ${productId}`);
-        //get the data from local storage
-        let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-        //Filter the cart: Create a new array excluding the item to be removed
-        const updatedCart = cart.filter(item => item.id !== productId);
+            // Create a new link to remove existing handlers
+            const newLoginLink = loginLink.cloneNode(true);
+            newLoginLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log("Logout clicked");
+                // Clear stored authentication information
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('currentUser');
+                // Refresh the page
+                window.location.reload();
+            });
 
-        //check the number change
-        if (cart.length === updatedCart.length) {
-            console.warn(`Product with ID ${productId} not found in cart for removal.`);
+            // Replace the old link with the new one
+            loginLink.parentNode.replaceChild(newLoginLink, loginLink);
         } else {
-            console.log(`Product with ID ${productId} removed.`);
+            console.log("User is NOT logged in, showing login link");
+            // User is not logged in, show login link
+            loginLink.textContent = 'Login';
+            loginLink.classList.remove('logout-button');
+            loginLink.href = 'login.html';
+
+            // Make sure we don't have any click handlers
+            const newLoginLink = loginLink.cloneNode(true);
+            loginLink.parentNode.replaceChild(newLoginLink, loginLink);
         }
+    } catch (error) {
+        console.error("Error in updateNavigation:", error);
+    }
+}
 
-        //save the new cart
-        localStorage.setItem('shoppingCart', JSON.stringify(updatedCart));
-
-        //refresh the display
-        location.reload();
+function updateQuantity(productId, newQuantity) {
+    console.log(`Attempting to update product ${productId} quantity to ${newQuantity}`);
+    // If the quantity is less than 1, remove it
+    if (newQuantity < 1) {
+        removeItem(productId);
+        return;
     }
 
+    // Get the current cart from localStorage
+    let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+    // Get the item by id
+    const itemIndex = cart.findIndex(item => item.id === productId);
 
+    // If item found, update it
+    if (itemIndex > -1) {
+        cart[itemIndex].quantity = newQuantity;
+        console.log(`Updated quantity for product ${productId} to ${newQuantity}`);
+        // Save the cart data to localStorage only
+        localStorage.setItem('shoppingCart', JSON.stringify(cart));
+    } else {
+        console.warn(`Product with ID ${productId} not found in cart for update.`);
+    }
 
+    location.reload();
+}
 
+function removeItem(productId) {
+    // Update quantity in localStorage and refresh the cart display
+    console.log(`Attempting to remove product with ID: ${productId}`);
+    // Get the data from local storage
+    let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+    // Filter the cart: Create a new array excluding the item to be removed
+    const updatedCart = cart.filter(item => item.id !== productId);
 
+    // Check if item was found and removed
+    if (cart.length === updatedCart.length) {
+        console.warn(`Product with ID ${productId} not found in cart for removal.`);
+    } else {
+        console.log(`Product with ID ${productId} removed.`);
+    }
 
+    // Save the new cart to localStorage only
+    localStorage.setItem('shoppingCart', JSON.stringify(updatedCart));
 
-
-
-
-
-
-})
+    // Refresh the display
+    location.reload();
+}
