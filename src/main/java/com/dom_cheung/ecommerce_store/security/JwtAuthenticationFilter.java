@@ -21,17 +21,18 @@ import java.util.stream.Collectors;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    private final AuthService authService;
+
     @Autowired
-    private AuthService authService;
+    public JwtAuthenticationFilter(@Lazy AuthService authService) {
+        this.authService = authService;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        // 添加日志记录请求信息
-        System.out.println("JwtAuthenticationFilter processing request: " + request.getMethod() + " " + request.getRequestURI());
-
-        // 获取Authorization头
+        // Get Authorization header
         String authHeader = request.getHeader("Authorization");
 
         // 打印Authorization头信息（不要在生产环境中这样做）
