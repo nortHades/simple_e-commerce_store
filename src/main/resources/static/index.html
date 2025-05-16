@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- 现有的 head 内容 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple E-commerce</title>
@@ -18,13 +19,20 @@
     <nav class="main-nav">
         <a href="index.html" class="nav-link">Home</a>
         <a href="cart.html" class="nav-link">View Cart</a>
+        <a href="orders.html" class="nav-link" id="orders-link">My Orders</a>
         <a href="login.html" id="login-link" class="nav-link nav-button">Login</a>
     </nav>
 </header>
 
-<main class="container"> <div id="product-list" class="product-list">
-    Loading products...
-</div>
+<main class="container">
+    <div id="product-list" class="product-list">
+        Loading products...
+    </div>
+
+    <!-- pagination -->
+    <div id="pagination" class="pagination">
+        <!-- pagination -->
+    </div>
 </main>
 
 <footer class="site-footer">
