@@ -68,11 +68,14 @@ function loadProducts() {
  * @param {HTMLElement} container - Container element to display products in
  */
 function displayProducts(products, container) {
+    // Get the shopping cart to check if products are already in it
+    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+
     products.forEach(product => {
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
 
-        // Create product link
+        // Create product link (without the "Add to Cart" button area)
         const productLink = document.createElement('a');
         productLink.href = `product.html?id=${product.id}`;
         productLink.style.textDecoration = 'none';
@@ -100,15 +103,158 @@ function displayProducts(products, container) {
         productPrice.textContent = formatCurrency(product.price);
         productInfo.appendChild(productPrice);
 
-        // Add info to link
+        // Add product info to link
         productLink.appendChild(productInfo);
-
-        // Add link to card
         productCard.appendChild(productLink);
 
-        // Add card to container
+        // Create card footer (for add to cart button or quantity controls)
+        const cardFooter = document.createElement('div');
+        cardFooter.className = 'card-footer';
+
+        // Check if product is already in cart
+        const cartItem = cart.find(item => item.id === product.id);
+
+        if (cartItem) {
+            // If product is in cart, display quantity controls
+            cardFooter.appendChild(createQuantityControl(product, cartItem.quantity));
+        } else {
+            // If product is not in cart, display "Add to Cart" button
+            const addButton = document.createElement('button');
+            addButton.className = 'add-to-cart-btn';
+            addButton.textContent = 'Add to Cart';
+            addButton.onclick = (e) => {
+                e.preventDefault(); // Prevent navigation
+                e.stopPropagation(); // Prevent event bubbling
+                addToCart(product, 1, cardFooter);
+            };
+            cardFooter.appendChild(addButton);
+        }
+
+        productCard.appendChild(cardFooter);
         container.appendChild(productCard);
     });
+}
+
+/**
+ * Create quantity control element
+ * @param {Object} product - Product to create control for
+ * @param {number} quantity - Current quantity
+ * @returns {HTMLElement} Quantity control element
+ */
+function createQuantityControl(product, quantity) {
+    const quantityControl = document.createElement('div');
+    quantityControl.className = 'quantity-control';
+
+    // Create minus button
+    const minusBtn = document.createElement('button');
+    minusBtn.className = 'quantity-btn';
+    minusBtn.textContent = '-';
+    minusBtn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        updateCartItemQuantity(product, quantity - 1, quantityControl.parentElement);
+    };
+
+    // Create quantity display
+    const quantityDisplay = document.createElement('div');
+    quantityDisplay.className = 'quantity-display';
+    quantityDisplay.textContent = quantity;
+
+    // Create plus button
+    const plusBtn = document.createElement('button');
+    plusBtn.className = 'quantity-btn';
+    plusBtn.textContent = '+';
+    plusBtn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        updateCartItemQuantity(product, quantity + 1, quantityControl.parentElement);
+    };
+
+    // Add elements to quantity control
+    quantityControl.appendChild(minusBtn);
+    quantityControl.appendChild(quantityDisplay);
+    quantityControl.appendChild(plusBtn);
+
+    return quantityControl;
+}
+
+/**
+ * Add product to cart
+ * @param {Object} product - Product to add
+ * @param {number} quantity - Quantity to add
+ * @param {HTMLElement} cardFooter - Card footer element to update
+ */
+function addToCart(product, quantity, cardFooter) {
+    // Get current cart
+    let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+
+    // Check if product is already in cart
+    const existingItemIndex = cart.findIndex(item => item.id === product.id);
+
+    if (existingItemIndex > -1) {
+        // Update quantity if product is already in cart
+        cart[existingItemIndex].quantity += quantity;
+    } else {
+        // Add new item to cart
+        cart.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            imageUrl: product.imageUrl,
+            quantity: quantity
+        });
+    }
+
+    // Save updated cart
+    localStorage.setItem('shoppingCart', JSON.stringify(cart));
+
+    // Update UI with quantity control
+    cardFooter.innerHTML = '';
+    cardFooter.appendChild(createQuantityControl(product, quantity));
+
+    // Show feedback to user
+    showToast(`${product.name} added to cart!`);
+}
+
+/**
+ * Update cart item quantity
+ * @param {Object} product - Product to update
+ * @param {number} newQuantity - New quantity
+ * @param {HTMLElement} cardFooter - Card footer element to update
+ */
+function updateCartItemQuantity(product, newQuantity, cardFooter) {
+    // Get current cart
+    let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+
+    if (newQuantity <= 0) {
+        // Remove item from cart if quantity is 0 or less
+        cart = cart.filter(item => item.id !== product.id);
+
+        // Replace quantity control with "Add to Cart" button
+        cardFooter.innerHTML = '';
+        const addButton = document.createElement('button');
+        addButton.className = 'add-to-cart-btn';
+        addButton.textContent = 'Add to Cart';
+        addButton.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            addToCart(product, 1, cardFooter);
+        };
+        cardFooter.appendChild(addButton);
+    } else {
+        // Update quantity
+        const itemIndex = cart.findIndex(item => item.id === product.id);
+        if (itemIndex > -1) {
+            cart[itemIndex].quantity = newQuantity;
+
+            // Update quantity display
+            cardFooter.innerHTML = '';
+            cardFooter.appendChild(createQuantityControl(product, newQuantity));
+        }
+    }
+
+    // Save updated cart
+    localStorage.setItem('shoppingCart', JSON.stringify(cart));
 }
 
 /**
@@ -212,4 +358,63 @@ function createPagination(currentPage, totalPages) {
         false,
         currentPage === totalPages
     ));
+}
+
+/**
+ * Show toast notification
+ * @param {string} message - Message to display
+ */
+function showToast(message) {
+    // Check if toast container exists, create it if not
+    let toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toast-container';
+        document.body.appendChild(toastContainer);
+
+        // Add style for toast container
+        toastContainer.style.position = 'fixed';
+        toastContainer.style.bottom = '20px';
+        toastContainer.style.right = '20px';
+        toastContainer.style.zIndex = '1000';
+    }
+
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+
+    // Style toast
+    toast.style.backgroundColor = '#333';
+    toast.style.color = 'white';
+    toast.style.padding = '12px 20px';
+    toast.style.borderRadius = '4px';
+    toast.style.marginTop = '10px';
+    toast.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.3s ease-in-out';
+
+    // Add toast to container
+    toastContainer.appendChild(toast);
+
+    // Trigger reflow to enable transition
+    toast.offsetHeight;
+
+    // Show toast
+    toast.style.opacity = '1';
+
+    // Hide toast after 3 seconds
+    setTimeout(() => {
+        toast.style.opacity = '0';
+
+        // Remove toast after fade out
+        setTimeout(() => {
+            toastContainer.removeChild(toast);
+
+            // Remove container if empty
+            if (toastContainer.children.length === 0) {
+                document.body.removeChild(toastContainer);
+            }
+        }, 300);
+    }, 3000);
 }

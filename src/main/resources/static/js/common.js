@@ -111,3 +111,49 @@ function formatDate(dateString) {
     const date = new Date(dateString);
     return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
+
+/**
+ * Get cart item count
+ * @returns {number} - Total number of items in cart
+ */
+function getCartItemCount() {
+    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+    return cart.reduce((total, item) => total + item.quantity, 0);
+}
+
+/**
+ * Update cart count in the UI
+ */
+function updateCartCount() {
+    const cartLink = document.querySelector('a[href="cart.html"]');
+    if (!cartLink) return;
+
+    const count = getCartItemCount();
+
+    // Remove any existing badge
+    const existingBadge = cartLink.querySelector('.cart-badge');
+    if (existingBadge) {
+        existingBadge.remove();
+    }
+
+    // If cart has items, add a badge
+    if (count > 0) {
+        const badge = document.createElement('span');
+        badge.className = 'cart-badge';
+        badge.textContent = count;
+
+        // Style the badge
+        badge.style.backgroundColor = '#B5EAEA';
+        badge.style.color = 'white';
+        badge.style.borderRadius = '50%';
+        badge.style.padding = '0.25em 0.6em';
+        badge.style.fontSize = '0.8em';
+        badge.style.fontWeight = 'bold';
+        badge.style.marginLeft = '5px';
+
+        cartLink.appendChild(badge);
+    }
+}
+
+// Call updateCartCount when the page loads
+document.addEventListener('DOMContentLoaded', updateCartCount);
