@@ -992,26 +992,7 @@ button:hover, input[type="button"]:hover, input[type="submit"]:hover {
     flex-grow: 1;
 }
 
-/* Image container - key fix for consistent sizing */
-.product-image-container {
-    width: 100%;
-    height: 240px; /* Fixed height for all images */
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f8f8f8;
-    border-radius: 4px;
-    overflow: hidden;
-}
 
-/* Image styles - key fix for aspect ratio preservation */
-.product-image {
-    max-width: 90%;
-    max-height: 90%;
-    object-fit: contain; /* Maintains original aspect ratio */
-    transition: transform 0.3s ease;
-}
 
 .product-card:hover .product-image {
     transform: scale(1.05);
@@ -1303,10 +1284,6 @@ button:hover, input[type="button"]:hover, input[type="submit"]:hover {
     border-radius: 4px;
 }
 
-.product-name {
-    font-weight: 600;
-    margin-bottom: 5px;
-}
 
 .product-size, .product-quantity {
     color: #666;
