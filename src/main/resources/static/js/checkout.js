@@ -24,52 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('checkout-form').addEventListener('submit', handleCheckout);
 });
 
-/**
- * Update the navigation bar based on authentication status
- */
-function updateNavigation() {
-    const loginLink = document.getElementById('login-link');
-    if (!loginLink) return;
-
-    const authToken = localStorage.getItem('authToken');
-    let currentUser = null;
-
-    try {
-        const currentUserStr = localStorage.getItem('currentUser');
-        if (currentUserStr) {
-            currentUser = JSON.parse(currentUserStr);
-        }
-    } catch (e) {
-        console.error("Error parsing currentUser JSON:", e);
-        localStorage.removeItem('currentUser');
-    }
-
-    if (authToken && currentUser) {
-        // User is logged in, show username and logout button
-        loginLink.textContent = `${currentUser.username} (Logout)`;
-        loginLink.classList.add('logout-button');
-        loginLink.href = '#';
-
-        // Create a new link to remove existing handlers
-        const newLoginLink = loginLink.cloneNode(true);
-        newLoginLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            // Clear stored authentication information
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('currentUser');
-            // Redirect to login page
-            window.location.href = 'login.html';
-        });
-
-        // Replace the old link with the new one
-        loginLink.parentNode.replaceChild(newLoginLink, loginLink);
-    } else {
-        // User is not logged in, show login link
-        loginLink.textContent = 'Login';
-        loginLink.classList.remove('logout-button');
-        loginLink.href = 'login.html';
-    }
-}
 
 /**
  * Load selected items from localStorage

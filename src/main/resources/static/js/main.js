@@ -60,32 +60,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
-function updateNavigation() {
-    const loginLink = document.getElementById('login-link');
-    const authToken = localStorage.getItem('authToken');
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-    if (authToken && currentUser) {
-        // User is logged in, show username and logout button
-        loginLink.textContent = `${currentUser.username} (Logout)`;
-        loginLink.classList.add('logout-button');
-        loginLink.href = '#';
-        loginLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            // Clear stored authentication information
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('currentUser');
-            // Refresh the page
-            window.location.reload();
-        });
-    } else {
-        // User is not logged in, show login link
-        loginLink.textContent = 'Login';
-        loginLink.classList.remove('logout-button');
-        loginLink.href = 'login.html';
-
-        // Remove any existing click event listeners
-        const newLoginLink = loginLink.cloneNode(true);
-        loginLink.parentNode.replaceChild(newLoginLink, loginLink);
-    }
-}

@@ -34,16 +34,16 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
-                        // Publicly accessible paths - including checkout.html and order-confirmation.html
+                        // Publicly accessible paths
                         .requestMatchers("/", "/index.html", "/product.html", "/cart.html",
-                                "/login.html", "/checkout.html", "/order-confirmation.html").permitAll()
+                                "/login.html", "/checkout.html", "/order-confirmation.html", "/orders.html").permitAll()
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products", "/api/products/**").permitAll()
                         // Authentication related APIs
                         .requestMatchers("/api/auth/**").permitAll()
                         // User APIs require authentication
                         .requestMatchers("/api/users/**").authenticated()
-                        // Order APIs require authentication - this is the critical security point
+                        // Order APIs require authentication
                         .requestMatchers("/api/orders/**").authenticated()
                         // Admin APIs require ADMIN role
                         .requestMatchers("/admin/**").hasRole("ADMIN")

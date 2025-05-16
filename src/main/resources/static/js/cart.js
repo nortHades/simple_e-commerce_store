@@ -24,71 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-/**
- * Update navigation based on authentication status
- */
-function updateNavigation() {
-    try {
-        const loginLink = document.getElementById('login-link');
-        const ordersLink = document.getElementById('orders-link');
 
-        if (!loginLink) return;
-
-        const authToken = localStorage.getItem('authToken');
-        let currentUser = null;
-
-        try {
-            const currentUserStr = localStorage.getItem('currentUser');
-            if (currentUserStr) {
-                currentUser = JSON.parse(currentUserStr);
-            }
-        } catch (e) {
-            console.error("Error parsing currentUser JSON:", e);
-            localStorage.removeItem('currentUser');
-        }
-
-        // Handle My Orders link visibility
-        if (ordersLink) {
-            if (authToken && currentUser) {
-                ordersLink.style.display = 'inline-block'; // Show orders link for logged in users
-            } else {
-                ordersLink.style.display = 'none'; // Hide orders link for logged out users
-            }
-        }
-
-        if (authToken && currentUser) {
-            // User is logged in, show username and logout button
-            loginLink.textContent = `${currentUser.username} (Logout)`;
-            loginLink.classList.add('logout-button');
-            loginLink.href = '#';
-
-            // Create a new link to remove existing handlers
-            const newLoginLink = loginLink.cloneNode(true);
-            newLoginLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                // Clear stored authentication information
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('currentUser');
-                // Refresh the page
-                window.location.reload();
-            });
-
-            // Replace the old link with the new one
-            loginLink.parentNode.replaceChild(newLoginLink, loginLink);
-        } else {
-            // User is not logged in, show login link
-            loginLink.textContent = 'Login';
-            loginLink.classList.remove('logout-button');
-            loginLink.href = 'login.html';
-
-            // Remove any existing click event listeners
-            const newLoginLink = loginLink.cloneNode(true);
-            loginLink.parentNode.replaceChild(newLoginLink, loginLink);
-        }
-    } catch (error) {
-        console.error("Error in updateNavigation:", error);
-    }
-}
 
 /**
  * Load cart data from localStorage and display it

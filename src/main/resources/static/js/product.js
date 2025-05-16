@@ -121,66 +121,6 @@ function handleAddToCart() {
     alert(`${currentProduct.name} added to cart!`);
 }
 
-// Navigation update function
-function updateNavigation() {
-    try {
-        console.log("Updating navigation");
-        const loginLink = document.getElementById('login-link');
-        if (!loginLink) {
-            console.error("Login link element not found!");
-            return;
-        }
-
-        const authToken = localStorage.getItem('authToken');
-        let currentUser = null;
-
-        try {
-            const currentUserStr = localStorage.getItem('currentUser');
-            if (currentUserStr) {
-                currentUser = JSON.parse(currentUserStr);
-                console.log("Current user:", currentUser.username);
-            }
-        } catch (e) {
-            console.error("Error parsing currentUser JSON:", e);
-            localStorage.removeItem('currentUser');
-        }
-
-        if (authToken && currentUser) {
-            console.log("User is logged in, updating UI");
-            // User is logged in, show username and logout button
-            loginLink.textContent = `${currentUser.username} (Logout)`;
-            loginLink.classList.add('logout-button');
-            loginLink.href = '#';
-
-            // Create new link to remove existing event listeners
-            const newLoginLink = loginLink.cloneNode(true);
-            newLoginLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                console.log("Logout clicked");
-                // Clear stored authentication information
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('currentUser');
-                // Refresh the page
-                window.location.reload();
-            });
-
-            // Replace old link with the new one
-            loginLink.parentNode.replaceChild(newLoginLink, loginLink);
-        } else {
-            console.log("User is NOT logged in, showing login link");
-            // User is not logged in, show login link
-            loginLink.textContent = 'Login';
-            loginLink.classList.remove('logout-button');
-            loginLink.href = 'login.html';
-
-            // Make sure we don't have any click handlers
-            const newLoginLink = loginLink.cloneNode(true);
-            loginLink.parentNode.replaceChild(newLoginLink, loginLink);
-        }
-    } catch (error) {
-        console.error("Error in updateNavigation:", error);
-    }
-}
 
 // Cart synchronization function
 function syncCartWithServer(cart) {
