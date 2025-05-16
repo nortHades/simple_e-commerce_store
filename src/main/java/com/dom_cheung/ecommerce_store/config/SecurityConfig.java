@@ -36,7 +36,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         // Publicly accessible paths
                         .requestMatchers("/", "/index.html", "/product.html", "/cart.html",
-                                "/login.html", "/checkout.html", "/order-confirmation.html", "/orders.html").permitAll()
+                                "/login.html", "/checkout.html", "/order-confirmation.html",
+                                "/orders.html", "/order-detail.html").permitAll()
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products", "/api/products/**").permitAll()
                         // Authentication related APIs

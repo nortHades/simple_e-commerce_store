@@ -902,3 +902,216 @@ button:hover, input[type="button"]:hover, input[type="submit"]:hover {
     border-radius: 6px;
     color: #666;
 }
+
+/* Order Detail Page Styles */
+.order-detail-container {
+    max-width: 900px;
+    margin: 0 auto 40px;
+}
+
+.order-navigation {
+    margin-bottom: 20px;
+}
+
+.order-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.order-detail-header h2 {
+    margin: 0;
+}
+
+.order-detail-info {
+    display: flex;
+    margin-bottom: 30px;
+    gap: 30px;
+}
+
+.order-detail-meta {
+    flex: 1;
+}
+
+.order-detail-shipping {
+    flex: 1;
+}
+
+.address-box {
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    border: 1px solid #eee;
+}
+
+.order-items-table {
+    margin-bottom: 30px;
+}
+
+.item-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.item-table th, .item-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.item-table th {
+    background-color: #f9f9f9;
+    font-weight: 600;
+}
+
+.item-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.item-details {
+    display: flex;
+    align-items: center;
+}
+
+.item-info {
+    margin-left: 15px;
+}
+
+.item-name {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.item-price {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.item-subtotal {
+    font-weight: 600;
+    color: #B5EAEA;
+}
+
+.order-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.cancel-button {
+    padding: 10px 20px;
+    background-color: #F38BA0;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.cancel-button:hover {
+    background-color: #E07A8D;
+}
+
+.cancel-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Modal styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 6px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 90%;
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.danger-button {
+    padding: 10px 20px;
+    background-color: #F38BA0;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.secondary-button {
+    padding: 10px 20px;
+    background-color: #f5f5f5;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.danger-button:hover {
+    background-color: #E07A8D;
+}
+
+.secondary-button:hover {
+    background-color: #e9e9e9;
+}
+
+.order-status-message {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    border-left: 4px solid #666;
+}
+
+.order-status-message.success {
+    background-color: #D4EDDA;
+    border-left-color: #155724;
+    color: #155724;
+}
+
+.order-status-message.error {
+    background-color: #F8D7DA;
+    border-left-color: #721C24;
+    color: #721C24;
+}
+
+.order-status-message.info {
+    background-color: #D1ECF1;
+    border-left-color: #0C5460;
+    color: #0C5460;
+}

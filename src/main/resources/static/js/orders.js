@@ -152,8 +152,7 @@ function displayOrders(orders) {
 
     orders.forEach(order => {
         // Format date
-        const orderDate = new Date(order.orderDate);
-        const formattedDate = orderDate.toLocaleDateString() + ' ' + orderDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const orderDate = formatDate(order.orderDate);
 
         // Format status class
         const statusClass = order.status.toLowerCase();
@@ -162,14 +161,14 @@ function displayOrders(orders) {
             <div class="order-card">
                 <div class="order-header">
                     <h3>Order #${order.orderNumber}</h3>
-                    <span class="order-date">${formattedDate}</span>
+                    <span class="order-date">${orderDate}</span>
                 </div>
                 <div class="order-info">
                     <span class="order-status ${statusClass}">${order.status}</span>
-                    <span class="order-total">$${order.totalAmount.toFixed(2)}</span>
+                    <span class="order-total">${formatCurrency(order.totalAmount)}</span>
                 </div>
                 <div class="order-actions">
-                    <button class="view-button" onclick="viewOrderDetails('${order.orderNumber}')">View Details</button>
+                    <a href="order-detail.html?orderNumber=${order.orderNumber}" class="view-button">View Details</a>
                 </div>
             </div>
         `;
