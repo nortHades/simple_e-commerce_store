@@ -345,7 +345,7 @@ function showConfirmationBar(product, quantity) {
             <span>Cart Subtotal (${cartItemCount} items): <strong>${formatCurrency(cartTotal)}</strong></span>
         </div>
         <div class="confirmation-actions" style="display: flex; gap: 10px;">
-            <button id="go-to-cart-btn" style="padding: 8px 16px; background: white; border: 1px solid #B5EAEA; border-radius: 4px; cursor: pointer;">
+            <button id="go-to-cart-btn" style="padding: 8px 16px; background: white; border: 1px solid #B5EAEA; border-radius: 4px; color: #333; cursor: pointer;">
                 Go to Cart
             </button>
             <button id="proceed-to-checkout-btn" style="padding: 8px 16px; background: #FFC107; border: none; border-radius: 4px; cursor: pointer;">
