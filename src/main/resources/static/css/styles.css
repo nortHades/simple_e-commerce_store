@@ -1002,6 +1002,7 @@ button:hover, input[type="button"]:hover, input[type="submit"]:hover {
 .product-info {
     flex-grow: 1;
     display: flex;
+    margin: auto;
     flex-direction: column;
 }
 
