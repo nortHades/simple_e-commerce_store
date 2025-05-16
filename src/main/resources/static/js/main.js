@@ -185,35 +185,15 @@ function createQuantityControl(product, quantity) {
  * @param {HTMLElement} cardFooter - Card footer element to update
  */
 function addToCart(product, quantity, cardFooter) {
-    // Get current cart
-    let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-
-    // Check if product is already in cart
-    const existingItemIndex = cart.findIndex(item => item.id === product.id);
-
-    if (existingItemIndex > -1) {
-        // Update quantity if product is already in cart
-        cart[existingItemIndex].quantity += quantity;
-    } else {
-        // Add new item to cart
-        cart.push({
-            id: product.id,
-            name: product.name,
-            price: product.price,
-            imageUrl: product.imageUrl,
-            quantity: quantity
-        });
-    }
-
-    // Save updated cart
-    localStorage.setItem('shoppingCart', JSON.stringify(cart));
+    // Add to cart and automatically select it
+    const cartItem = addToCartAndSelect(product, quantity);
 
     // Update UI with quantity control
     cardFooter.innerHTML = '';
-    cardFooter.appendChild(createQuantityControl(product, quantity));
+    cardFooter.appendChild(createQuantityControl(product, cartItem.quantity));
 
-    // Show feedback to user
-    showToast(`${product.name} added to cart!`);
+    // Show add to cart modal
+    showAddToCartModal(product, quantity);
 }
 
 /**

@@ -245,7 +245,7 @@ function displayProductDetails(product, container) {
 function handleAddToCart() {
     if (!currentProduct) {
         console.error("Product details not loaded yet.");
-        showToast("Unable to add to cart. Product information is not available.");
+        alert("Unable to add to cart. Product information is not available.");
         return;
     }
 
@@ -253,30 +253,8 @@ function handleAddToCart() {
     const quantitySelect = document.getElementById('product-quantity');
     const quantity = parseInt(quantitySelect.value);
 
-    // Get current cart
-    let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-
-    // Check if product is already in cart
-    const existingItemIndex = cart.findIndex(item => item.id === currentProduct.id);
-
-    if (existingItemIndex > -1) {
-        // Update quantity if product is already in cart
-        cart[existingItemIndex].quantity = quantity;
-        showToast(`Updated ${currentProduct.name} quantity in cart!`);
-    } else {
-        // Add new item to cart
-        cart.push({
-            id: currentProduct.id,
-            name: currentProduct.name,
-            price: currentProduct.price,
-            imageUrl: currentProduct.imageUrl,
-            quantity: quantity
-        });
-        showToast(`${currentProduct.name} added to cart!`);
-    }
-
-    // Save updated cart
-    localStorage.setItem('shoppingCart', JSON.stringify(cart));
+    // Add to cart with automatic selection
+    addToCartAndSelect(currentProduct, quantity);
 
     // Update button text
     const addToCartBtn = document.querySelector('.add-to-cart-btn');
@@ -284,11 +262,8 @@ function handleAddToCart() {
         addToCartBtn.textContent = 'Update Cart';
     }
 
-    // If user is logged in, sync cart to server
-    const authToken = localStorage.getItem('authToken');
-    if (authToken) {
-        syncCartWithServer(cart);
-    }
+    // Show add to cart modal
+    showAddToCartModal(currentProduct, quantity);
 }
 
 /**

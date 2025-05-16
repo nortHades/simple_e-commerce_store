@@ -52,6 +52,20 @@ function loadCartData() {
         return;
     }
 
+    // Make sure all cart items are in selectedItems by default (if they aren't manually unselected)
+    let selectedItemsUpdated = false;
+    cart.forEach(item => {
+        if (!selectedItems.includes(item.id)) {
+            selectedItems.push(item.id);
+            selectedItemsUpdated = true;
+        }
+    });
+
+    // Save updated selectedItems back to localStorage if changed
+    if (selectedItemsUpdated) {
+        localStorage.setItem('selectedCartItems', JSON.stringify(selectedItems));
+    }
+
     // Create table for display
     const table = document.createElement('table');
     table.className = 'cart-table';
@@ -165,7 +179,7 @@ function loadCartData() {
     cartItemsDiv.appendChild(table);
 
     // Display the overall total
-    cartTotalDiv.innerHTML = `Total: $${selectedTotal.toFixed(2)} of $${overallTotal.toFixed(2)}`;
+    cartTotalDiv.innerHTML = `Total: $${selectedTotal.toFixed(2)}`;
 
     // Update selected count
     selectedCountDiv.textContent = `${selectedCount} items selected`;
@@ -271,7 +285,7 @@ function updateCartTotals() {
 
     // Update displayed totals
     if (cartTotalDiv) {
-        cartTotalDiv.innerHTML = `Total: $${selectedTotal.toFixed(2)} of $${overallTotal.toFixed(2)}`;
+        cartTotalDiv.innerHTML = `Total: $${selectedTotal.toFixed(2)}`;
     }
 
     if (selectedCountDiv) {

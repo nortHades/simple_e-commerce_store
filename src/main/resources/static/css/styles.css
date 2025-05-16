@@ -1454,3 +1454,121 @@ button:hover, input[type="button"]:hover, input[type="submit"]:hover {
     font-weight: 600;
     width: 30%;
 }
+
+
+/* Add to Cart Modal Styles */
+.add-to-cart-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 1000;
+}
+
+.add-to-cart-modal.visible {
+    opacity: 1;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 6px;
+    padding: 20px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.success-message {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    font-weight: 500;
+}
+
+.check-icon {
+    color: #4CAF50;
+    font-size: 1.5em;
+    margin-right: 10px;
+}
+
+.product-info-mini {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+}
+
+.product-info-mini img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    margin-right: 15px;
+    border-radius: 4px;
+}
+
+.product-name {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.product-size, .product-quantity {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.cart-subtotal {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    font-weight: 500;
+}
+
+.subtotal-value {
+    color: #B5EAEA;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+.go-to-cart-btn, .proceed-to-checkout-btn {
+    padding: 12px 0;
+    width: 48%;
+    border-radius: 4px;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.go-to-cart-btn {
+    border: 1px solid #B5EAEA;
+    background-color: white;
+    color: #333;
+}
+
+.go-to-cart-btn:hover {
+    border-color: #9FD8D8;
+    background-color: #f9f9f9;
+}
+
+.proceed-to-checkout-btn {
+    background-color: #FFC107;
+    border: none;
+    color: #333;
+}
+
+.proceed-to-checkout-btn:hover {
+    background-color: #e5ac06;
+}

@@ -155,5 +155,179 @@ function updateCartCount() {
     }
 }
 
+/**
+ * Add product to cart
+ * @param {Object} product - Product to add
+ * @param {number} quantity - Quantity to add
+ * @returns {Object} cartItem - The cart item that was added or updated
+ */
+function addToCartAndSelect(product, quantity) {
+    // Get current cart
+    let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+
+    // Check if product is already in cart
+    const existingItemIndex = cart.findIndex(item => item.id === product.id);
+    let cartItem;
+
+    if (existingItemIndex > -1) {
+        // Update quantity if product is already in cart
+        cart[existingItemIndex].quantity += quantity;
+        cartItem = cart[existingItemIndex];
+    } else {
+        // Add new item to cart
+        cartItem = {
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            imageUrl: product.imageUrl,
+            quantity: quantity
+        };
+        cart.push(cartItem);
+    }
+
+    // Save updated cart
+    localStorage.setItem('shoppingCart', JSON.stringify(cart));
+
+    // Add to selected items (default selected)
+    let selectedItems = JSON.parse(localStorage.getItem('selectedCartItems')) || [];
+    if (!selectedItems.includes(product.id)) {
+        selectedItems.push(product.id);
+        localStorage.setItem('selectedCartItems', JSON.stringify(selectedItems));
+    }
+
+    // Update cart count in UI
+    updateCartCount();
+
+    // If user is logged in, sync cart to server
+    const authToken = localStorage.getItem('authToken');
+    if (authToken) {
+        syncCartWithServer(cart);
+    }
+
+    return cartItem;
+}
+
+/**
+ * Sync cart with the server
+ * @param {Array} cart - The cart to sync
+ */
+function syncCartWithServer(cart) {
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) return;
+
+    fetch('/api/users/cart', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify({ items: cart })
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to sync cart');
+            }
+            console.log('Cart synchronized with server successfully');
+        })
+        .catch(error => {
+            console.error('Error syncing cart with server:', error);
+        });
+}
+
+/**
+ * Show Add to Cart confirmation modal with options
+ * @param {Object} product - The product that was added
+ * @param {number} quantity - The quantity that was added
+ * @param {Object} options - Additional options like size
+ */
+function showAddToCartModal(product, quantity, options = {}) {
+    // Create modal background
+    const modal = document.createElement('div');
+    modal.className = 'add-to-cart-modal';
+
+    // Calculate cart subtotal
+    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+    const cartTotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    const cartItemCount = cart.reduce((count, item) => count + item.quantity, 0);
+
+    // Create modal content
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="success-message">
+                <span class="check-icon">✓</span>
+                <span>Added to cart</span>
+            </div>
+            <div class="product-info-mini">
+                <img src="${product.imageUrl || 'images/placeholder.png'}" alt="${product.name}">
+                <div>
+                    <div class="product-name">${product.name}</div>
+                    ${options.size ? `<div class="product-size">Size: ${options.size}</div>` : ''}
+                    <div class="product-quantity">Quantity: ${quantity}</div>
+                </div>
+            </div>
+            <div class="cart-subtotal">
+                <div class="subtotal-label">Cart Subtotal (${cartItemCount} items):</div>
+                <div class="subtotal-value">${formatCurrency(cartTotal)}</div>
+            </div>
+            <div class="modal-actions">
+                <button class="go-to-cart-btn">Go to Cart</button>
+                <button class="proceed-to-checkout-btn">Proceed to Checkout (${cartItemCount} items)</button>
+            </div>
+        </div>
+    `;
+
+    // Add to body
+    document.body.appendChild(modal);
+
+    // Trigger animation (delay for DOM to update)
+    setTimeout(() => {
+        modal.classList.add('visible');
+    }, 10);
+
+    // Add event listeners
+    modal.querySelector('.go-to-cart-btn').addEventListener('click', function() {
+        closeModal(modal);
+        window.location.href = 'cart.html';
+    });
+
+    modal.querySelector('.proceed-to-checkout-btn').addEventListener('click', function() {
+        closeModal(modal);
+        // Check if user is logged in
+        if (!localStorage.getItem('authToken')) {
+            sessionStorage.setItem('redirectAfterLogin', 'checkout.html');
+            window.location.href = 'login.html';
+        } else {
+            window.location.href = 'checkout.html';
+        }
+    });
+
+    // Close modal when clicking outside
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeModal(modal);
+        }
+    });
+
+    // Close modal after 10 seconds if no action
+    setTimeout(() => {
+        if (document.body.contains(modal)) {
+            closeModal(modal);
+        }
+    }, 10000);
+}
+
+/**
+ * Close the modal with animation
+ * @param {HTMLElement} modal - The modal element to close
+ */
+function closeModal(modal) {
+    modal.classList.remove('visible');
+    setTimeout(() => {
+        if (document.body.contains(modal)) {
+            document.body.removeChild(modal);
+        }
+    }, 300);
+}
+
 // Call updateCartCount when the page loads
 document.addEventListener('DOMContentLoaded', updateCartCount);
