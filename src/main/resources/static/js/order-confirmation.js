@@ -1,10 +1,23 @@
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('Order confirmation page loaded');
+
+    // Check if user is logged in
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) {
+        console.log('User not logged in, redirecting to login page');
+        // Redirect to login page
+        window.location.href = 'login.html';
+        return;
+    }
+
     // Update navigation
     updateNavigation();
 
     // Display order confirmation
     displayOrderConfirmation();
 });
+
+// 其余代码保持不变...
 
 /**
  * Update the navigation bar based on authentication status

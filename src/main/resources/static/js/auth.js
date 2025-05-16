@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return response.json();
             })
             .then(data => {
-                console.log('Login successful, received token');
+                console.log('Login successful, received token:', data);
 
                 // Store authentication token and user info
                 localStorage.setItem('authToken', data.token);
@@ -85,25 +85,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (redirectUrl) {
+                    // Remove redirect info to prevent loops
                     sessionStorage.removeItem('redirectAfterLogin');
                     console.log('Redirecting to:', redirectUrl);
 
-                    // Process URL
-                    if (redirectUrl.includes('://')) {
-                        // It's a full URL, use as is
-                        window.location.href = redirectUrl;
-                    } else {
-                        // It's a relative path
-                        if (redirectUrl.startsWith('/')) {
-                            redirectUrl = redirectUrl.substring(1);
-                        }
-
-                        const baseUrl = window.location.origin;
-                        const finalUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + redirectUrl;
-
-                        console.log('Final redirect URL:', finalUrl);
-                        window.location.href = finalUrl;
-                    }
+                    // 简化重定向逻辑，直接使用相对路径
+                    window.location.href = redirectUrl;
                 } else {
                     // Default redirect to home page
                     console.log('No redirect URL found, going to index.html');

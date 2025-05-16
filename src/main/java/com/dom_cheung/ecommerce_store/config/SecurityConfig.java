@@ -34,22 +34,17 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
-                        // Publicly accessible paths - checkout.html and order-confirmation.html removed from here
+
                         .requestMatchers(HttpMethod.GET, "/", "/index.html", "/product.html", "/cart.html",
                                 "/login.html").permitAll()
-                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products", "/api/products/**").permitAll()
-                        // Authentication related APIs
                         .requestMatchers("/api/auth/**").permitAll()
-                        // Explicitly require authentication for checkout and order confirmation pages
                         .requestMatchers(HttpMethod.GET, "/checkout.html", "/order-confirmation.html").authenticated()
-                        // User APIs require authentication
                         .requestMatchers("/api/users/**").authenticated()
-                        // Admin APIs require ADMIN role
+                        .requestMatchers("/api/orders/**").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        // Order status update endpoint requires ADMIN role
                         .requestMatchers(HttpMethod.POST, "/api/orders/*/status").hasRole("ADMIN")
-                        // Other requests require authentication
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
