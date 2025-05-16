@@ -1249,7 +1249,7 @@ button:hover, input[type="button"]:hover, input[type="submit"]:hover {
 
 /* Card footer */
 .card-footer {
-    margin-top: auto;
+    margin: auto;
 }
 
 /* Add to cart button */
@@ -1321,6 +1321,7 @@ button:hover, input[type="button"]:hover, input[type="submit"]:hover {
 .product-image-container {
     flex: 1 1 400px;
     display: flex;
+    margin: auto;
     align-items: center;
     justify-content: center;
     height: 400px; /* Fixed height */
