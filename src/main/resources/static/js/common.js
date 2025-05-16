@@ -235,6 +235,184 @@ function syncCartWithServer(cart) {
 }
 
 /**
+ * Show a simple toast notification
+ * @param {string} message - Message to display in the toast
+ * @param {string} type - Type of toast ('success', 'error', 'info')
+ * @param {number} duration - Duration in milliseconds to show the toast
+ */
+function showToast(message, type = 'success', duration = 3000) {
+    // Check if toast container exists, create it if not
+    let toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toast-container';
+        document.body.appendChild(toastContainer);
+
+        // Add style for toast container
+        toastContainer.style.position = 'fixed';
+        toastContainer.style.bottom = '20px';
+        toastContainer.style.right = '20px';
+        toastContainer.style.zIndex = '1000';
+    }
+
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+
+    // Style toast
+    toast.style.backgroundColor = type === 'success' ? '#4CAF50' :
+        type === 'error' ? '#F44336' : '#2196F3';
+    toast.style.color = 'white';
+    toast.style.padding = '12px 20px';
+    toast.style.borderRadius = '4px';
+    toast.style.marginTop = '10px';
+    toast.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.3s ease-in-out';
+
+    // Add toast to container
+    toastContainer.appendChild(toast);
+
+    // Trigger reflow to enable transition
+    toast.offsetHeight;
+
+    // Show toast
+    toast.style.opacity = '1';
+
+    // Hide toast after duration
+    setTimeout(() => {
+        toast.style.opacity = '0';
+
+        // Remove toast after fade out
+        setTimeout(() => {
+            if (toastContainer.contains(toast)) {
+                toastContainer.removeChild(toast);
+            }
+
+            // Remove container if empty
+            if (toastContainer.children.length === 0 && document.body.contains(toastContainer)) {
+                document.body.removeChild(toastContainer);
+            }
+        }, 300);
+    }, duration);
+}
+
+/**
+ * Show a confirmation bar at the top of the page
+ * @param {Object} product - Product that was added to cart
+ * @param {number} quantity - Quantity that was added
+ */
+function showConfirmationBar(product, quantity) {
+    // Remove any existing confirmation bar
+    const existingBar = document.getElementById('confirmation-bar');
+    if (existingBar) {
+        existingBar.remove();
+    }
+
+    // Calculate cart subtotal
+    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+    const cartTotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    const cartItemCount = cart.reduce((count, item) => count + item.quantity, 0);
+
+    // Create confirmation bar
+    const bar = document.createElement('div');
+    bar.id = 'confirmation-bar';
+    bar.className = 'confirmation-bar';
+
+    // Set styles for the bar
+    bar.style.position = 'fixed';
+    bar.style.top = '0';
+    bar.style.left = '0';
+    bar.style.width = '100%';
+    bar.style.backgroundColor = '#E8F5E9';
+    bar.style.padding = '10px 20px';
+    bar.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)';
+    bar.style.zIndex = '1000';
+    bar.style.display = 'flex';
+    bar.style.justifyContent = 'space-between';
+    bar.style.alignItems = 'center';
+    bar.style.transform = 'translateY(-100%)';
+    bar.style.transition = 'transform 0.3s ease-in-out';
+
+    // Add content to the bar
+    bar.innerHTML = `
+        <div class="confirmation-content">
+            <span class="check-icon" style="color: #4CAF50; margin-right: 10px;">✓</span>
+            <span><strong>${product.name}</strong> added to cart (Qty: ${quantity})</span>
+        </div>
+        <div class="confirmation-info" style="margin: 0 auto;">
+            <span>Cart Subtotal (${cartItemCount} items): <strong>${formatCurrency(cartTotal)}</strong></span>
+        </div>
+        <div class="confirmation-actions" style="display: flex; gap: 10px;">
+            <button id="go-to-cart-btn" style="padding: 8px 16px; background: white; border: 1px solid #B5EAEA; border-radius: 4px; cursor: pointer;">
+                Go to Cart
+            </button>
+            <button id="proceed-to-checkout-btn" style="padding: 8px 16px; background: #FFC107; border: none; border-radius: 4px; cursor: pointer;">
+                Proceed to Checkout
+            </button>
+            <button id="close-confirmation-btn" style="background: none; border: none; font-size: 1.2em; cursor: pointer; margin-left: 10px;">
+                ×
+            </button>
+        </div>
+    `;
+
+    // Add to body
+    document.body.appendChild(bar);
+
+    // Show the bar with animation
+    setTimeout(() => {
+        bar.style.transform = 'translateY(0)';
+    }, 10);
+
+    // Add event listeners
+    document.getElementById('go-to-cart-btn').addEventListener('click', function() {
+        window.location.href = 'cart.html';
+    });
+
+    document.getElementById('proceed-to-checkout-btn').addEventListener('click', function() {
+        // Check if user is logged in
+        if (!localStorage.getItem('authToken')) {
+            sessionStorage.setItem('redirectAfterLogin', 'checkout.html');
+            window.location.href = 'login.html';
+        } else {
+            window.location.href = 'checkout.html';
+        }
+    });
+
+    document.getElementById('close-confirmation-btn').addEventListener('click', function() {
+        hideConfirmationBar();
+    });
+
+    // Add a class to the body to adjust padding
+    document.body.classList.add('has-confirmation-bar');
+
+    // Auto-hide the bar after 6 seconds
+    setTimeout(() => {
+        hideConfirmationBar();
+    }, 6000);
+}
+
+/**
+ * Hide the confirmation bar with animation
+ */
+function hideConfirmationBar() {
+    const bar = document.getElementById('confirmation-bar');
+    if (bar) {
+        bar.style.transform = 'translateY(-100%)';
+
+        // Remove from DOM after animation
+        setTimeout(() => {
+            if (document.body.contains(bar)) {
+                document.body.removeChild(bar);
+                // Remove body padding class
+                document.body.classList.remove('has-confirmation-bar');
+            }
+        }, 300);
+    }
+}
+
+/**
  * Show Add to Cart confirmation modal with options
  * @param {Object} product - The product that was added
  * @param {number} quantity - The quantity that was added
@@ -253,6 +431,7 @@ function showAddToCartModal(product, quantity, options = {}) {
     // Create modal content
     modal.innerHTML = `
         <div class="modal-content">
+            <button id="close-modal-btn" style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.2em; cursor: pointer;">×</button>
             <div class="success-message">
                 <span class="check-icon">✓</span>
                 <span>Added to cart</span>
@@ -299,6 +478,11 @@ function showAddToCartModal(product, quantity, options = {}) {
         } else {
             window.location.href = 'checkout.html';
         }
+    });
+
+    // Close button event listener
+    modal.querySelector('#close-modal-btn').addEventListener('click', function() {
+        closeModal(modal);
     });
 
     // Close modal when clicking outside

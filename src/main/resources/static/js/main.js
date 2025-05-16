@@ -179,7 +179,7 @@ function createQuantityControl(product, quantity) {
 }
 
 /**
- * Add product to cart
+ * Add product to cart from main page
  * @param {Object} product - Product to add
  * @param {number} quantity - Quantity to add
  * @param {HTMLElement} cardFooter - Card footer element to update
@@ -192,8 +192,11 @@ function addToCart(product, quantity, cardFooter) {
     cardFooter.innerHTML = '';
     cardFooter.appendChild(createQuantityControl(product, cartItem.quantity));
 
-    // Show add to cart modal
-    showAddToCartModal(product, quantity);
+    // Show simple toast notification
+    showToast(`${product.name} added to cart`, 'success', 2000);
+
+    // Update cart count in navigation
+    updateCartCount();
 }
 
 /**

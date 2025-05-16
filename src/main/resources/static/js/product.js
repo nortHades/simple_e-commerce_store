@@ -240,12 +240,12 @@ function displayProductDetails(product, container) {
 }
 
 /**
- * Handle add to cart button click
+ * Handle add to cart button click on product detail page
  */
 function handleAddToCart() {
     if (!currentProduct) {
         console.error("Product details not loaded yet.");
-        alert("Unable to add to cart. Product information is not available.");
+        showToast("Unable to add to cart. Product information is not available.", "error");
         return;
     }
 
@@ -262,8 +262,11 @@ function handleAddToCart() {
         addToCartBtn.textContent = 'Update Cart';
     }
 
-    // Show add to cart modal
-    showAddToCartModal(currentProduct, quantity);
+    // Show confirmation bar at the top of the page
+    showConfirmationBar(currentProduct, quantity);
+
+    // Update cart count in navigation
+    updateCartCount();
 }
 
 /**
