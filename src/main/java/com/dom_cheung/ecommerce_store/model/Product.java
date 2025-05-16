@@ -1,25 +1,25 @@
 package com.dom_cheung.ecommerce_store.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.*; // using jakarta.persistence for Spring Boot 3+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 @Entity
 @Table(name = "products")
-@Data
+@Data // This automatically generates getters, setters, toString, equals, and hashCode methods
 @NoArgsConstructor
 @AllArgsConstructor
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-increment for the ID
     private long id;
 
     @Column(nullable = false)
     private String name;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT") // Use TEXT for potentially longer descriptions
     private String description;
 
     @Column(nullable = false)
@@ -30,8 +30,4 @@ public class Product {
 
     @Column(length = 255)
     private String imagePublicId;
-
-    // New field for product visibility control
-    @Column(nullable = false)
-    private boolean active = true; // Default to active
 }
