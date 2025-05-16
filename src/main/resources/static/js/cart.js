@@ -109,12 +109,6 @@ function loadCartData() {
     // Get the selected items array (or create it if it doesn't exist)
     let selectedItems = JSON.parse(localStorage.getItem('selectedCartItems')) || [];
 
-    // If selectedItems is empty but cart has items, select all by default
-    if (selectedItems.length === 0 && cart.length > 0) {
-        selectedItems = cart.map(item => item.id);
-        localStorage.setItem('selectedCartItems', JSON.stringify(selectedItems));
-    }
-
     if (cart.length === 0) {
         cartItemsDiv.innerHTML = '<p>Your shopping cart is empty.</p>';
         cartTotalDiv.innerHTML = '';
@@ -250,7 +244,13 @@ function loadCartData() {
  * @param {number} itemId - The item ID
  */
 function handleItemCheckboxChange(event, itemId) {
+    // stopPropagation
+    event.stopPropagation();
+
     const checkbox = event.target;
+
+    // log
+    console.log(`Item checkbox ${itemId} changed to ${checkbox.checked}`);
 
     // Get current selected items
     let selectedItems = JSON.parse(localStorage.getItem('selectedCartItems')) || [];
@@ -268,8 +268,11 @@ function handleItemCheckboxChange(event, itemId) {
     // Save updated selected items
     localStorage.setItem('selectedCartItems', JSON.stringify(selectedItems));
 
-    // Update the cart display
-    loadCartData();
+    // Update Select All checkbox state without triggering its change event
+    updateSelectAllCheckbox();
+
+    // Update the cart totals without reloading entire cart
+    updateCartTotals();
 }
 
 /**
@@ -277,8 +280,14 @@ function handleItemCheckboxChange(event, itemId) {
  * @param {Event} event - The change event
  */
 function handleSelectAll(event) {
+    // stopPropagation
+    event.stopPropagation();
+
     const selectAll = event.target.checked;
     const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+
+    // log
+    console.log("Select All checkbox change:", selectAll);
 
     // Get all item IDs
     const allItemIds = cart.map(item => item.id);
@@ -287,15 +296,56 @@ function handleSelectAll(event) {
     if (selectAll) {
         localStorage.setItem('selectedCartItems', JSON.stringify(allItemIds));
     } else {
+        // null
         localStorage.setItem('selectedCartItems', JSON.stringify([]));
     }
 
-    // Update the cart display
-    loadCartData();
+    // set checkbox
+    const itemCheckboxes = document.querySelectorAll('.cart-item-checkbox');
+    itemCheckboxes.forEach(checkbox => {
+        checkbox.checked = selectAll;
+    });
+
+    // Update the cart totals
+    updateCartTotals();
+}
+
+/**
+ * Update cart totals without reloading the entire cart
+ */
+function updateCartTotals() {
+    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+    const selectedItems = JSON.parse(localStorage.getItem('selectedCartItems')) || [];
+    const cartTotalDiv = document.getElementById('cart-total');
+    const selectedCountDiv = document.getElementById('selected-count');
+
+    let overallTotal = 0;
+    let selectedTotal = 0;
+    let selectedCount = 0;
+
+    cart.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        overallTotal += itemTotal;
+
+        if (selectedItems.includes(item.id)) {
+            selectedTotal += itemTotal;
+            selectedCount += item.quantity;
+        }
+    });
+
+    // Update displayed totals
+    if (cartTotalDiv) {
+        cartTotalDiv.innerHTML = `Total: $${selectedTotal.toFixed(2)} of $${overallTotal.toFixed(2)}`;
+    }
+
+    if (selectedCountDiv) {
+        selectedCountDiv.textContent = `${selectedCount} items selected`;
+    }
 }
 
 /**
  * Update the "Select All" checkbox state based on individual selections
+ * without triggering its change event
  */
 function updateSelectAllCheckbox() {
     const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
@@ -303,11 +353,19 @@ function updateSelectAllCheckbox() {
     const selectAllCheckbox = document.getElementById('select-all');
 
     if (selectAllCheckbox) {
-        // Check if all items are selected
-        selectAllCheckbox.checked = cart.length > 0 && selectedItems.length === cart.length;
+        // remove eventhandler
+        const oldSelectAllCheckbox = selectAllCheckbox;
+        const newSelectAllCheckbox = oldSelectAllCheckbox.cloneNode(true);
 
-        // Make it indeterminate if some but not all items are selected
-        selectAllCheckbox.indeterminate = selectedItems.length > 0 && selectedItems.length < cart.length;
+        // update status
+        newSelectAllCheckbox.checked = cart.length > 0 && selectedItems.length === cart.length;
+        newSelectAllCheckbox.indeterminate = selectedItems.length > 0 && selectedItems.length < cart.length;
+
+        // add
+        newSelectAllCheckbox.addEventListener('change', handleSelectAll);
+
+        // replace
+        oldSelectAllCheckbox.parentNode.replaceChild(newSelectAllCheckbox, oldSelectAllCheckbox);
     }
 }
 
