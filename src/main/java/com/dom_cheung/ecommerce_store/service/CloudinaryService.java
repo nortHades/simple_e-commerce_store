@@ -13,6 +13,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Service for handling Cloudinary image operations
+ * Supports uploading, transforming, and deleting images
+ */
 @Service
 public class CloudinaryService {
 
@@ -43,20 +47,15 @@ public class CloudinaryService {
 
         // Apply image optimization based on type
         if (imageType != ImageType.ORIGINAL) {
-            Map<String, Object> transformation = new HashMap<>();
+            // Use Transformation object instead of Map
+            Transformation transformation = new Transformation();
 
             if (imageType == ImageType.THUMBNAIL) {
                 // Thumbnail settings: 400x400, 80% quality
-                transformation.put("width", 400);
-                transformation.put("height", 400);
-                transformation.put("crop", "fill");
-                transformation.put("quality", 80);
+                transformation.width(400).height(400).crop("fill").quality(80);
             } else if (imageType == ImageType.DETAIL) {
                 // Detail settings: 800x800, 85% quality
-                transformation.put("width", 800);
-                transformation.put("height", 800);
-                transformation.put("crop", "fill");
-                transformation.put("quality", 85);
+                transformation.width(800).height(800).crop("fill").quality(85);
             }
 
             options.put("transformation", transformation);
@@ -90,6 +89,10 @@ public class CloudinaryService {
 
     /**
      * Upload a file using default optimization (DETAIL image type)
+     * @param file The file to upload
+     * @param folderName The folder to upload to
+     * @return Map containing secure_url and public_id
+     * @throws IOException If upload fails
      */
     public Map<String, String> uploadFile(MultipartFile file, String folderName) throws IOException {
         return uploadFile(file, folderName, ImageType.DETAIL);
@@ -97,6 +100,7 @@ public class CloudinaryService {
 
     /**
      * Delete a file from Cloudinary
+     * @param publicId The public ID of the file to delete
      */
     public void deleteFile(String publicId) {
         if (publicId == null || publicId.isBlank()) {
@@ -110,6 +114,34 @@ public class CloudinaryService {
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error during deleteFile for public_id '" + publicId + "': " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * Generate a resized image URL from the original Cloudinary URL
+     * @param originalUrl The original Cloudinary URL
+     * @param width Desired width
+     * @param height Desired height
+     * @return URL with transformation parameters
+     */
+    public String getResizedImageUrl(String originalUrl, int width, int height) {
+        if (originalUrl == null || originalUrl.isEmpty()) {
+            return null;
+        }
+
+        // For Cloudinary URLs, insert transformation parameters
+        if (originalUrl.contains("cloudinary.com")) {
+            // Find the position to insert the transformation parameters
+            int uploadIndex = originalUrl.indexOf("/upload/");
+            if (uploadIndex != -1) {
+                String baseUrl = originalUrl.substring(0, uploadIndex + 8); // Include "/upload/"
+                String resourcePart = originalUrl.substring(uploadIndex + 8);
+
+                return baseUrl + "c_fill,w_" + width + ",h_" + height + "/" + resourcePart;
+            }
+        }
+
+        // Return original URL if it's not a Cloudinary URL or format is unexpected
+        return originalUrl;
     }
 
     /**
