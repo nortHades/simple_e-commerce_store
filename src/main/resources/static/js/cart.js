@@ -429,12 +429,15 @@ function handleCheckout() {
     // Check if user is logged in
     const authToken = localStorage.getItem('authToken');
     if (!authToken) {
+        console.log('User not logged in, redirecting to login page');
         // Save current URL to redirect back after login
         sessionStorage.setItem('redirectAfterLogin', 'checkout.html');
-        // Redirect to login page
-        window.location.href = 'login.html';
+        // Redirect to login page with query parameter
+        window.location.href = 'login.html?redirect=checkout.html';
         return;
     }
+
+    console.log('User is logged in, proceeding to checkout');
 
     // Get selected items
     const selectedItems = JSON.parse(localStorage.getItem('selectedCartItems')) || [];

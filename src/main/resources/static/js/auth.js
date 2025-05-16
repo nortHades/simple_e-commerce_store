@@ -60,39 +60,45 @@ document.addEventListener('DOMContentLoaded', () => {
                 return response.json();
             })
             .then(data => {
-                // Store authentication token or user info
+                console.log('Login successful, received token');
+
+                // Store authentication token and user info
                 localStorage.setItem('authToken', data.token);
                 localStorage.setItem('currentUser', JSON.stringify({
                     username: data.username,
                     id: data.id
                 }));
 
-                // Move shopping cart to user account
+                // Sync shopping cart with server
                 syncCartWithServer();
 
                 // Check if there's a redirect URL saved
                 let redirectUrl = sessionStorage.getItem('redirectAfterLogin');
-                console.log('Redirect URL:', redirectUrl);
+                console.log('Redirect URL from sessionStorage:', redirectUrl);
+
+                // Also check URL parameters for redirect
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirectParam = urlParams.get('redirect');
+                if (redirectParam && !redirectUrl) {
+                    redirectUrl = redirectParam;
+                    console.log('Redirect URL from URL parameter:', redirectUrl);
+                }
 
                 if (redirectUrl) {
                     sessionStorage.removeItem('redirectAfterLogin');
+                    console.log('Redirecting to:', redirectUrl);
 
-                    // Fix potential URL issues
+                    // Process URL
                     if (redirectUrl.includes('://')) {
                         // It's a full URL, use as is
                         window.location.href = redirectUrl;
                     } else {
                         // It's a relative path
-
-                        // Remove leading slash if present
                         if (redirectUrl.startsWith('/')) {
                             redirectUrl = redirectUrl.substring(1);
                         }
 
-                        // Get current origin (base URL)
                         const baseUrl = window.location.origin;
-
-                        // Ensure we don't have double slashes
                         const finalUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + redirectUrl;
 
                         console.log('Final redirect URL:', finalUrl);
@@ -100,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 } else {
                     // Default redirect to home page
+                    console.log('No redirect URL found, going to index.html');
                     window.location.href = 'index.html';
                 }
             })
@@ -108,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 loginMessage.textContent = 'Invalid username or password. Please try again.';
             });
     });
+
 
     // Register form submission
     registerFormElement.addEventListener('submit', (event) => {

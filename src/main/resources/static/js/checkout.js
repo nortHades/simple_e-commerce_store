@@ -1,13 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('Checkout page loaded');
+
     // Check if user is logged in
     const authToken = localStorage.getItem('authToken');
     if (!authToken) {
+        console.log('User not logged in, redirecting to login page');
         // Save current URL to redirect back after login
-        sessionStorage.setItem('redirectAfterLogin', window.location.href);
-        // Redirect to login page
-        window.location.href = 'login.html';
+        const currentPage = window.location.pathname.split('/').pop();
+        sessionStorage.setItem('redirectAfterLogin', currentPage);
+        // Redirect to login page with query parameter
+        window.location.href = 'login.html?redirect=' + currentPage;
         return;
     }
+
+    console.log('User is logged in, proceeding with checkout page initialization');
 
     // Update navigation bar
     updateNavigation();
