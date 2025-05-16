@@ -426,13 +426,17 @@ function removeItem(productId) {
  * Handle checkout button click
  */
 function handleCheckout() {
+    console.log('Checkout button clicked');
+
     // Check if user is logged in
     const authToken = localStorage.getItem('authToken');
+    console.log('Auth token exists:', !!authToken);
+
     if (!authToken) {
         console.log('User not logged in, redirecting to login page');
         // Save current URL to redirect back after login
         sessionStorage.setItem('redirectAfterLogin', 'checkout.html');
-        // Redirect to login page with query parameter
+        // Redirect to login page
         window.location.href = 'login.html?redirect=checkout.html';
         return;
     }
@@ -441,6 +445,7 @@ function handleCheckout() {
 
     // Get selected items
     const selectedItems = JSON.parse(localStorage.getItem('selectedCartItems')) || [];
+    console.log('Selected items:', selectedItems.length);
 
     // Check if any items are selected
     if (selectedItems.length === 0) {
@@ -449,5 +454,6 @@ function handleCheckout() {
     }
 
     // Redirect to checkout page
+    console.log('Redirecting to checkout.html');
     window.location.href = 'checkout.html';
 }

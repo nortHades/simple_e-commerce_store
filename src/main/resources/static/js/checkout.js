@@ -1,15 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Checkout page loaded');
 
-    // Check if user is logged in
+    // Check if user is logged in - frontend authentication check
     const authToken = localStorage.getItem('authToken');
     if (!authToken) {
         console.log('User not logged in, redirecting to login page');
         // Save current URL to redirect back after login
-        const currentPage = window.location.pathname.split('/').pop();
-        sessionStorage.setItem('redirectAfterLogin', currentPage);
-        // Redirect to login page with query parameter
-        window.location.href = 'login.html?redirect=' + currentPage;
+        sessionStorage.setItem('redirectAfterLogin', 'checkout.html');
+        // Redirect to login page
+        window.location.href = 'login.html?redirect=checkout.html';
         return;
     }
 
@@ -58,7 +57,7 @@ function updateNavigation() {
             // Clear stored authentication information
             localStorage.removeItem('authToken');
             localStorage.removeItem('currentUser');
-            // Refresh the page
+            // Redirect to login page
             window.location.href = 'login.html';
         });
 
@@ -131,6 +130,15 @@ function loadSelectedItems() {
 function handleCheckout(event) {
     event.preventDefault();
 
+    // Ensure the user is still logged in
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) {
+        alert('Your session has expired. Please login again.');
+        sessionStorage.setItem('redirectAfterLogin', 'checkout.html');
+        window.location.href = 'login.html';
+        return;
+    }
+
     const checkoutMessage = document.getElementById('checkout-message');
     checkoutMessage.textContent = '';
     checkoutMessage.classList.remove('success');
@@ -183,12 +191,12 @@ function handleCheckout(event) {
     // Show processing message
     checkoutMessage.textContent = 'Processing your order...';
 
-    // Send create order request
+    // Send create order request with Authorization header
     fetch('/api/orders', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+            'Authorization': `Bearer ${authToken}`
         },
         body: JSON.stringify(orderData)
     })

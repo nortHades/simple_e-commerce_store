@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Order confirmation page loaded');
 
-    // Check if user is logged in
+    // Check if user is logged in - frontend authentication check
     const authToken = localStorage.getItem('authToken');
     if (!authToken) {
         console.log('User not logged in, redirecting to login page');
@@ -16,8 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Display order confirmation
     displayOrderConfirmation();
 });
-
-// 其余代码保持不变...
 
 /**
  * Update the navigation bar based on authentication status
@@ -52,7 +50,7 @@ function updateNavigation() {
             // Clear stored authentication information
             localStorage.removeItem('authToken');
             localStorage.removeItem('currentUser');
-            // Refresh the page
+            // Redirect to login page
             window.location.href = 'login.html';
         });
 
@@ -102,8 +100,11 @@ function displayOrderConfirmation() {
             <span>Total: ${formattedTotal}</span>
         `;
     } else {
-        // If no order number is found, show a generic message
+        // If no order number is found, show a generic message or redirect
         orderNumberDiv.textContent = 'Order processed successfully.';
+
+        // Alternatively, redirect if there's no order data
+        // window.location.href = 'orders.html';
     }
 
     // Clear the session storage after displaying

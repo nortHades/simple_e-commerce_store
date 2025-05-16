@@ -34,17 +34,22 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
-
-                        .requestMatchers(HttpMethod.GET, "/", "/index.html", "/product.html", "/cart.html",
-                                "/login.html").permitAll()
+                        // Publicly accessible paths - including checkout.html and order-confirmation.html
+                        .requestMatchers("/", "/index.html", "/product.html", "/cart.html",
+                                "/login.html", "/checkout.html", "/order-confirmation.html").permitAll()
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products", "/api/products/**").permitAll()
+                        // Authentication related APIs
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/checkout.html", "/order-confirmation.html").authenticated()
+                        // User APIs require authentication
                         .requestMatchers("/api/users/**").authenticated()
+                        // Order APIs require authentication - this is the critical security point
                         .requestMatchers("/api/orders/**").authenticated()
+                        // Admin APIs require ADMIN role
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        // Order status update endpoint requires ADMIN role
                         .requestMatchers(HttpMethod.POST, "/api/orders/*/status").hasRole("ADMIN")
+                        // Other requests require authentication
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
