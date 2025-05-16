@@ -63,29 +63,38 @@ function loadProducts() {
 }
 
 /**
- * Display the products in the product list
+ * Display products in the product list
  * @param {Array} products - Array of product objects
  * @param {HTMLElement} container - Container element to display products in
  */
 function displayProducts(products, container) {
+    // Clear the container
+    container.innerHTML = '';
+
     // Get the shopping cart to check if products are already in it
     const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
 
     products.forEach(product => {
+        // Create product card
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
 
-        // Create product link (without the "Add to Cart" button area)
+        // Create product link
         const productLink = document.createElement('a');
         productLink.href = `product.html?id=${product.id}`;
-        productLink.style.textDecoration = 'none';
-        productLink.style.color = 'inherit';
 
-        // Create product image
+        // Create image container for consistent sizing
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'product-image-container';
+
+        // Create product image with proper sizing
         const productImage = document.createElement('img');
         productImage.src = product.imageUrl || 'images/placeholder.png';
         productImage.alt = product.name;
-        productLink.appendChild(productImage);
+        productImage.className = 'product-image';
+        imageContainer.appendChild(productImage);
+
+        productLink.appendChild(imageContainer);
 
         // Create product info container
         const productInfo = document.createElement('div');
@@ -107,7 +116,7 @@ function displayProducts(products, container) {
         productLink.appendChild(productInfo);
         productCard.appendChild(productLink);
 
-        // Create card footer (for add to cart button or quantity controls)
+        // Create card footer for cart controls
         const cardFooter = document.createElement('div');
         cardFooter.className = 'card-footer';
 
