@@ -28,32 +28,65 @@ document.addEventListener('DOMContentLoaded', () => {
  * Update navigation based on authentication status
  */
 function updateNavigation() {
-    const loginLink = document.getElementById('login-link');
-    const authToken = localStorage.getItem('authToken');
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    try {
+        const loginLink = document.getElementById('login-link');
+        const ordersLink = document.getElementById('orders-link');
 
-    if (authToken && currentUser) {
-        // User is logged in, show username and logout button
-        loginLink.textContent = `${currentUser.username} (Logout)`;
-        loginLink.classList.add('logout-button');
-        loginLink.href = '#';
-        loginLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            // Clear stored authentication information
-            localStorage.removeItem('authToken');
+        if (!loginLink) return;
+
+        const authToken = localStorage.getItem('authToken');
+        let currentUser = null;
+
+        try {
+            const currentUserStr = localStorage.getItem('currentUser');
+            if (currentUserStr) {
+                currentUser = JSON.parse(currentUserStr);
+            }
+        } catch (e) {
+            console.error("Error parsing currentUser JSON:", e);
             localStorage.removeItem('currentUser');
-            // Refresh the page
-            window.location.reload();
-        });
-    } else {
-        // User is not logged in, show login link
-        loginLink.textContent = 'Login';
-        loginLink.classList.remove('logout-button');
-        loginLink.href = 'login.html';
+        }
 
-        // Remove any existing click event listeners
-        const newLoginLink = loginLink.cloneNode(true);
-        loginLink.parentNode.replaceChild(newLoginLink, loginLink);
+        // Handle My Orders link visibility
+        if (ordersLink) {
+            if (authToken && currentUser) {
+                ordersLink.style.display = 'inline-block'; // Show orders link for logged in users
+            } else {
+                ordersLink.style.display = 'none'; // Hide orders link for logged out users
+            }
+        }
+
+        if (authToken && currentUser) {
+            // User is logged in, show username and logout button
+            loginLink.textContent = `${currentUser.username} (Logout)`;
+            loginLink.classList.add('logout-button');
+            loginLink.href = '#';
+
+            // Create a new link to remove existing handlers
+            const newLoginLink = loginLink.cloneNode(true);
+            newLoginLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                // Clear stored authentication information
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('currentUser');
+                // Refresh the page
+                window.location.reload();
+            });
+
+            // Replace the old link with the new one
+            loginLink.parentNode.replaceChild(newLoginLink, loginLink);
+        } else {
+            // User is not logged in, show login link
+            loginLink.textContent = 'Login';
+            loginLink.classList.remove('logout-button');
+            loginLink.href = 'login.html';
+
+            // Remove any existing click event listeners
+            const newLoginLink = loginLink.cloneNode(true);
+            loginLink.parentNode.replaceChild(newLoginLink, loginLink);
+        }
+    } catch (error) {
+        console.error("Error in updateNavigation:", error);
     }
 }
 
@@ -64,6 +97,11 @@ function loadCartData() {
     const cartItemsDiv = document.getElementById('cart-items');
     const cartTotalDiv = document.getElementById('cart-total');
     const selectedCountDiv = document.getElementById('selected-count');
+
+    if (!cartItemsDiv || !cartTotalDiv || !selectedCountDiv) {
+        console.error("Required DOM elements not found");
+        return;
+    }
 
     // Get the cart items from localStorage
     const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
@@ -88,18 +126,18 @@ function loadCartData() {
     const table = document.createElement('table');
     table.className = 'cart-table';
     table.innerHTML = `
-<thead>
-    <tr>
-        <th width="5%"></th>
-        <th width="45%">Product</th>
-        <th width="15%">Price</th>
-        <th width="15%">Quantity</th>
-        <th width="15%">Total</th>
-        <th width="5%"></th>
-    </tr>
-</thead>
-<tbody></tbody>
-`;
+    <thead>
+        <tr>
+            <th width="5%"></th>
+            <th width="45%">Product</th>
+            <th width="15%">Price</th>
+            <th width="15%">Quantity</th>
+            <th width="15%">Total</th>
+            <th width="5%"></th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+    `;
 
     const tbody = table.querySelector('tbody');
     let overallTotal = 0;
@@ -126,20 +164,20 @@ function loadCartData() {
         checkbox.className = 'cart-item-checkbox';
         checkbox.dataset.itemId = item.id;
         checkbox.checked = isSelected;
-        checkbox.addEventListener('change', handleItemCheckboxChange);
+        checkbox.addEventListener('change', (e) => handleItemCheckboxChange(e, item.id));
         checkboxCell.appendChild(checkbox);
         row.appendChild(checkboxCell);
 
         // Product cell
         const productCell = document.createElement('td');
         productCell.innerHTML = `
-        <div class="cart-item-details">
-            <img src="${item.imageUrl || 'images/placeholder.png'}" alt="${item.name}" class="cart-item-image">
-            <div class="cart-item-info">
-                <div>${item.name}</div>
+            <div class="cart-item-details">
+                <img src="${item.imageUrl || 'images/placeholder.png'}" alt="${item.name}" class="cart-item-image">
+                <div class="cart-item-info">
+                    <div>${item.name}</div>
+                </div>
             </div>
-        </div>
-    `;
+        `;
         row.appendChild(productCell);
 
         // Price cell
@@ -209,10 +247,10 @@ function loadCartData() {
 /**
  * Handle individual item checkbox change
  * @param {Event} event - The change event
+ * @param {number} itemId - The item ID
  */
-function handleItemCheckboxChange(event) {
+function handleItemCheckboxChange(event, itemId) {
     const checkbox = event.target;
-    const itemId = parseInt(checkbox.dataset.itemId);
 
     // Get current selected items
     let selectedItems = JSON.parse(localStorage.getItem('selectedCartItems')) || [];

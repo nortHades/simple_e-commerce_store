@@ -39,6 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // Show loading indicator
+        loginMessage.textContent = 'Logging in...';
+
         // Create request payload
         const credentials = { username, password };
 
@@ -68,19 +71,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 syncCartWithServer();
 
                 // Check if there's a redirect URL saved
-                const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
+                let redirectUrl = sessionStorage.getItem('redirectAfterLogin');
+                console.log('Redirect URL:', redirectUrl);
+
                 if (redirectUrl) {
                     sessionStorage.removeItem('redirectAfterLogin');
-                    window.location.href = redirectUrl;
+
+                    // Fix potential URL issues
+                    if (redirectUrl.includes('://')) {
+                        // It's a full URL, use as is
+                        window.location.href = redirectUrl;
+                    } else {
+                        // It's a relative path
+
+                        // Remove leading slash if present
+                        if (redirectUrl.startsWith('/')) {
+                            redirectUrl = redirectUrl.substring(1);
+                        }
+
+                        // Get current origin (base URL)
+                        const baseUrl = window.location.origin;
+
+                        // Ensure we don't have double slashes
+                        const finalUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + redirectUrl;
+
+                        console.log('Final redirect URL:', finalUrl);
+                        window.location.href = finalUrl;
+                    }
                 } else {
                     // Default redirect to home page
                     window.location.href = 'index.html';
                 }
             })
             .catch(error => {
-            console.error('Login error:', error);
-            loginMessage.textContent = 'Invalid username or password. Please try again.';
-        });
+                console.error('Login error:', error);
+                loginMessage.textContent = 'Invalid username or password. Please try again.';
+            });
     });
 
     // Register form submission
@@ -106,6 +132,9 @@ document.addEventListener('DOMContentLoaded', () => {
             registerMessage.textContent = 'Password must be at least 6 characters long.';
             return;
         }
+
+        // Show loading indicator
+        registerMessage.textContent = 'Creating account...';
 
         // Create request payload
         const userData = { username, password };
@@ -171,5 +200,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.error('Error syncing cart with server:', error);
                 });
         }
+    }
+
+    // Check URL parameters for redirect
+    const urlParams = new URLSearchParams(window.location.search);
+    const redirectParam = urlParams.get('redirect');
+    if (redirectParam) {
+        sessionStorage.setItem('redirectAfterLogin', redirectParam);
+        console.log('Redirect parameter detected and saved:', redirectParam);
     }
 });

@@ -71,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 });
 
+// 在handleAddToCart函数中添加
 function handleAddToCart() {
     if (!currentProduct) {
         console.error("Product details not loaded yet.");
@@ -99,6 +100,13 @@ function handleAddToCart() {
             quantity: 1
         });
         console.log("Added new item:", currentProduct.name);
+
+        // Also add to selected items
+        let selectedItems = JSON.parse(localStorage.getItem('selectedCartItems')) || [];
+        if (!selectedItems.includes(currentProduct.id)) {
+            selectedItems.push(currentProduct.id);
+            localStorage.setItem('selectedCartItems', JSON.stringify(selectedItems));
+        }
     }
 
     // Save to localStorage
