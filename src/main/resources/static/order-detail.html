@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details - Simple E-commerce</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon_io/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_io/favicon-16x16.png">
+    <link rel="manifest" href="/images/favicon_io/site.webmanifest">
+    <script src="js/common.js"></script>
+    <script src="js/order-detail.js" defer></script>
+</head>
+<body>
+<header class="site-header">
+    <h1>Simple E-commerce</h1>
+    <nav class="main-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="cart.html" class="nav-link">View Cart</a>
+        <a href="orders.html" class="nav-link" id="orders-link">My Orders</a>
+        <a href="login.html" id="login-link" class="nav-link nav-button">Login</a>
+    </nav>
+</header>
+
+<main class="container order-detail-container">
+    <div class="order-navigation">
+        <a href="orders.html" class="back-button">&lt; Back to My Orders</a>
+    </div>
+
+    <div id="order-detail">
+        <div class="order-detail-header">
+            <h2 id="order-number">Order Details</h2>
+            <div id="order-status" class="order-status pending">Loading...</div>
+        </div>
+
+        <div class="order-detail-info">
+            <div class="order-detail-meta">
+                <p><strong>Order Date:</strong> <span id="order-date">Loading...</span></p>
+                <p><strong>Total Amount:</strong> <span id="order-total">Loading...</span></p>
+            </div>
+
+            <div class="order-detail-shipping">
+                <h3>Shipping Address</h3>
+                <div id="shipping-address" class="address-box">
+                    Loading...
+                </div>
+            </div>
+        </div>
+
+        <h3>Order Items</h3>
+        <div id="order-items" class="order-items-table">
+            <p class="loading-message">Loading order items...</p>
+        </div>
+
+        <div id="order-actions" class="order-actions">
+            <!-- Cancel button will be added here dynamically if order is cancellable -->
+        </div>
+
+        <div id="cancel-confirmation" class="modal hidden">
+            <div class="modal-content">
+                <h3>Cancel Order</h3>
+                <p>Are you sure you want to cancel this order? This action cannot be undone.</p>
+                <div class="modal-actions">
+                    <button id="confirm-cancel" class="danger-button">Yes, Cancel Order</button>
+                    <button id="cancel-cancel" class="secondary-button">No, Keep Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <p>&copy; 2025 Simple E-commerce Store. All rights reserved.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - Simple E-commerce</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon_io/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_io/favicon-16x16.png">
+    <link rel="manifest" href="/images/favicon_io/site.webmanifest">
+    <script src="js/common.js"></script>
+    <script src="js/orders.js" defer></script>
+</head>
+<body>
+<header class="site-header">
+    <h1>Simple E-commerce</h1>
+    <nav class="main-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="cart.html" class="nav-link">View Cart</a>
+        <a href="orders.html" class="nav-link">My Orders</a>
+        <a href="login.html" id="login-link" class="nav-link nav-button">Login</a>
+    </nav>
+</header>
+
+<main class="container orders-container">
+    <div class="orders-header">
+        <h2>My Orders</h2>
+        <div class="orders-sort">
+            <label for="sort-orders">Sort by:</label>
+            <select id="sort-orders">
+                <option value="date-desc">Date (newest first)</option>
+                <option value="date-asc">Date (oldest first)</option>
+                <option value="total-desc">Total (highest first)</option>
+                <option value="total-asc">Total (lowest first)</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="orders-list">
+        <p class="loading-message">Loading your orders...</p>
+    </div>
+
+    <div id="order-detail" class="hidden">
+        <div class="detail-header">
+            <button id="back-to-list" class="back-button">&lt; Back to Orders</button>
+            <h3 id="detail-order-number">Order #</h3>
+        </div>
+        <div class="detail-info">
+            <div class="detail-meta">
+                <p><strong>Date:</strong> <span id="detail-date"></span></p>
+                <p><strong>Status:</strong> <span id="detail-status"></span></p>
+                <p><strong>Total:</strong> <span id="detail-total"></span></p>
+            </div>
+            <div class="detail-address">
+                <h4>Shipping Address:</h4>
+                <p id="detail-address"></p>
+            </div>
+        </div>
+        <div class="detail-items">
+            <h4>Items:</h4>
+            <div id="detail-items-list"></div>
+        </div>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <p>&copy; 2025 Simple E-commerce Store. All rights reserved.</p>
+</footer>
+</body>
+</html>

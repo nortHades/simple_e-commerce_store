@@ -3,29 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Details - Simple E-commerce</title> <link rel="stylesheet" href="css/styles.css">
+    <title>Product Details - Simple E-commerce</title>
+    <link rel="stylesheet" href="css/styles.css">
     <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon_io/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_io/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_io/favicon-16x16.png">
     <link rel="manifest" href="/images/favicon_io/site.webmanifest">
+    <script src="js/common.js"></script>
     <script src="js/product.js" defer></script>
 </head>
 <body>
 <header class="site-header">
-    <h1>Simple E-commerce</h1> <nav class="main-nav">
+    <h1>Simple E-commerce</h1>
+    <nav class="main-nav">
         <a href="index.html" class="nav-link">Home</a>
         <a href="cart.html" class="nav-link">View Cart</a>
+        <a href="orders.html" class="nav-link" id="orders-link">My Orders</a>
         <a href="login.html" id="login-link" class="nav-link nav-button">Login</a>
-        </nav>
+    </nav>
 </header>
 
-<main class="container product-detail-container"> <div class="product-navigation">
-        <a href="index.html" class="back-to-products-link nav-link">&lt; Back to Products</a>
+<main class="container">
+    <div class="product-navigation">
+        <a href="index.html" class="back-button">&lt; Back to Products</a>
     </div>
-    <hr class="detail-divider">
 
-    <div id="product-detail" class="product-detail">
-        Loading product details...
+    <div id="product-detail" class="product-detail-container">
+        <!-- Product content will be loaded dynamically -->
+        <div class="loading-message">Loading product details...</div>
     </div>
 </main>
 

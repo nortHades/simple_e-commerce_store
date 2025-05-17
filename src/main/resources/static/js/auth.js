@@ -39,6 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // Show loading indicator
+        loginMessage.textContent = 'Logging in...';
+
         // Create request payload
         const credentials = { username, password };
 
@@ -57,24 +60,49 @@ document.addEventListener('DOMContentLoaded', () => {
                 return response.json();
             })
             .then(data => {
-                // Store authentication token or user info
+                console.log('Login successful, received token:', data);
+
+                // Store authentication token and user info
                 localStorage.setItem('authToken', data.token);
                 localStorage.setItem('currentUser', JSON.stringify({
                     username: data.username,
                     id: data.id
                 }));
 
-                // Move shopping cart to user account
+                // Sync shopping cart with server
                 syncCartWithServer();
 
-                // Redirect to home page
-                window.location.href = 'index.html';
+                // Check if there's a redirect URL saved
+                let redirectUrl = sessionStorage.getItem('redirectAfterLogin');
+                console.log('Redirect URL from sessionStorage:', redirectUrl);
+
+                // Also check URL parameters for redirect
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirectParam = urlParams.get('redirect');
+                if (redirectParam && !redirectUrl) {
+                    redirectUrl = redirectParam;
+                    console.log('Redirect URL from URL parameter:', redirectUrl);
+                }
+
+                if (redirectUrl) {
+                    // Remove redirect info to prevent loops
+                    sessionStorage.removeItem('redirectAfterLogin');
+                    console.log('Redirecting to:', redirectUrl);
+
+                    // 简化重定向逻辑，直接使用相对路径
+                    window.location.href = redirectUrl;
+                } else {
+                    // Default redirect to home page
+                    console.log('No redirect URL found, going to index.html');
+                    window.location.href = 'index.html';
+                }
             })
             .catch(error => {
                 console.error('Login error:', error);
                 loginMessage.textContent = 'Invalid username or password. Please try again.';
             });
     });
+
 
     // Register form submission
     registerFormElement.addEventListener('submit', (event) => {
@@ -99,6 +127,9 @@ document.addEventListener('DOMContentLoaded', () => {
             registerMessage.textContent = 'Password must be at least 6 characters long.';
             return;
         }
+
+        // Show loading indicator
+        registerMessage.textContent = 'Creating account...';
 
         // Create request payload
         const userData = { username, password };
@@ -164,5 +195,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.error('Error syncing cart with server:', error);
                 });
         }
+    }
+
+    // Check URL parameters for redirect
+    const urlParams = new URLSearchParams(window.location.search);
+    const redirectParam = urlParams.get('redirect');
+    if (redirectParam) {
+        sessionStorage.setItem('redirectAfterLogin', redirectParam);
+        console.log('Redirect parameter detected and saved:', redirectParam);
     }
 });

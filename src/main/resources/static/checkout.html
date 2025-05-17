@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Simple E-commerce</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon_io/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_io/favicon-16x16.png">
+    <link rel="manifest" href="/images/favicon_io/site.webmanifest">
+    <script src="js/common.js"></script>
+    <script src="js/checkout.js" defer></script>
+</head>
+<body>
+<header class="site-header">
+    <h1>Simple E-commerce</h1>
+    <nav class="main-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="cart.html" class="nav-link">View Cart</a>
+        <a href="orders.html" class="nav-link">My Orders</a>
+        <a href="login.html" id="login-link" class="nav-link nav-button">Login</a>
+    </nav>
+</header>
+
+<main class="container checkout-container">
+    <div class="checkout-header">
+        <h2>Checkout</h2>
+        <a href="cart.html" class="back-to-cart-link nav-link">&lt; Back to Cart</a>
+    </div>
+    <hr class="checkout-divider">
+
+    <div class="checkout-sections">
+        <!-- Order Summary -->
+        <div class="order-summary">
+            <h3>Order Summary</h3>
+            <div id="order-items">
+                Loading items...
+            </div>
+            <div id="order-total" class="order-total">
+                Total: $0.00
+            </div>
+        </div>
+
+        <!-- Shipping Information Form -->
+        <div class="shipping-form">
+            <h3>Shipping Information</h3>
+            <form id="checkout-form">
+                <div class="form-group">
+                    <label for="full-name">Full Name</label>
+                    <input type="text" id="full-name" name="fullName" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="shipping-address">Address</label>
+                    <textarea id="shipping-address" name="shippingAddress" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="city">City</label>
+                    <input type="text" id="city" name="city" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label for="state">State/Province</label>
+                        <input type="text" id="state" name="state" required>
+                    </div>
+                    <div class="form-group half">
+                        <label for="zip">Zip/Postal Code</label>
+                        <input type="text" id="zip" name="zip" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="country">Country</label>
+                    <input type="text" id="country" name="country" required>
+                </div>
+                <div class="form-message" id="checkout-message"></div>
+                <button type="submit" class="checkout-button">Place Order</button>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <p>&copy; 2025 Simple E-commerce Store. All rights reserved.</p>
+</footer>
+</body>
+</html>
