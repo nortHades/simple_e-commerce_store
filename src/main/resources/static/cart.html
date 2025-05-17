@@ -11,6 +11,53 @@
     <link rel="manifest" href="/images/favicon_io/site.webmanifest">
     <script src="js/common.js"></script>
     <script src="js/cart.js" defer></script>
+    <style>
+        .cart-item-image {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+
+        .cart-table {
+            table-layout: fixed;
+        }
+
+        .cart-table th:first-child,
+        .cart-table td:first-child {
+            width: 5%;
+        }
+
+        .cart-table th:nth-child(2),
+        .cart-table td:nth-child(2) {
+            width: 45%;
+        }
+
+        .cart-table th:nth-child(3),
+        .cart-table td:nth-child(3),
+        .cart-table th:nth-child(4),
+        .cart-table td:nth-child(4),
+        .cart-table th:nth-child(5),
+        .cart-table td:nth-child(5) {
+            width: 15%;
+        }
+
+        .cart-table th:last-child,
+        .cart-table td:last-child {
+            width: 5%;
+        }
+
+        .cart-item-details {
+            display: flex;
+            align-items: center;
+        }
+
+        .cart-item-info {
+            margin-left: 10px;
+            flex: 1;
+        }
+    </style>
 </head>
 <body>
 <header class="site-header">
