@@ -1,4 +1,4 @@
-# Simple E-commerce Web Application
+# Simple E-Commerce Web Application
 
 A full-stack e-commerce web application with user authentication, product management, shopping cart functionality, and order processing capabilities. Built with Spring Boot, Java, JPA/Hibernate, PostgreSQL, and vanilla JavaScript. This project showcases backend API development and frontend integration skills.
 
@@ -39,11 +39,11 @@ A full-stack e-commerce web application with user authentication, product manage
 * Update product quantities
 * Remove products from cart
 * Item selection for checkout
-* Cart data persistence in localStorage
+* Cart data persistence using localStorage
 
 ### Order Processing
 * Create orders from cart items
-* Comprehensive order status management (PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED)
+* Order status management (PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED)
 * View order history and details
 * Order cancellation for users (when in PENDING or PROCESSING state)
 * Admin-only order status updates
