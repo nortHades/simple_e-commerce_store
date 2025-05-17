@@ -71,12 +71,11 @@ public class CloudinaryService {
             LOGGER.warning("Request to delete file from Cloudinary with null or blank public_id.");
             return;
         }
-        LOGGER.info("Placeholder: Request to delete file from Cloudinary with public_id: " + publicId + ". Actual deletion not implemented in this phase.");
-        // try {
-        //     Map deleteResult = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
-        //     LOGGER.info("Cloudinary deletion result for public_id '" + publicId + "': " + deleteResult.get("result"));
-        // } catch (Exception e) {
-        //     LOGGER.log(Level.SEVERE, "Error during placeholder deleteFile for public_id '" + publicId + "': " + e.getMessage(), e);
-        // }
+        try {
+            Map deleteResult = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+            LOGGER.info("Cloudinary deletion result for public_id '" + publicId + "': " + deleteResult.get("result"));
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error deleting file from Cloudinary with public_id '" + publicId + "': " + e.getMessage(), e);
+        }
     }
 }
