@@ -1,44 +1,52 @@
 # Simple E-commerce Web Application
 
-A full-stack web application demonstrating product browsing and a client-side shopping cart, built with Spring Boot, Java, JPA/Hibernate, MySQL, and vanilla JavaScript. This project serves as a portfolio piece showcasing core backend API development and frontend integration skills.
+A full-stack e-commerce web application with user authentication, product management, shopping cart functionality, and order processing capabilities. Built with Spring Boot, Java, JPA/Hibernate, PostgreSQL, and vanilla JavaScript. This project showcases backend API development and frontend integration skills.
 
 ---
 
-**[➡️ Live Demo (Link Placeholder)]** **(Optional: Add a link here once your application is deployed!)**
+**[➡️ Live Demo](https://simplee-commercestore-production.up.railway.app/)** 
 
 ---
 
-## Screenshots / Demo GIF
+## Screenshots
 
-**(Highly Recommended: Insert screenshots or an animated GIF here!)**
-
-* Show the product list page.
-* Show the product detail page.
-* Show the shopping cart page.
-* (Optional GIF: Show adding items, viewing cart, updating quantity, removing items).
-
-*Example Markdown for image:* `![Product List Screenshot](path/to/your/screenshot.png)` 
+![Product List](https://i.imgur.com/YPGnfXX.png)
+![Product Detail](https://i.imgur.com/tJR4Zw2.png)
+![Shopping Cart](https://i.imgur.com/0XB3ELm.png)
+![Checkout Page](https://i.imgur.com/GXdVZJD.png)
 
 ---
 
 ## Features
 
-* **Backend API:**
-    * RESTful API built with Spring Boot (Java).
-    * CRUD (Create, Read, Update, Delete) operations for Products.
-    * Uses Spring Data JPA and Hibernate for database interaction.
-    * Connected to a MySQL database.
-* **Frontend:**
-    * Displays a list of products fetched from the backend API.
-    * Displays detailed information for a single product.
-    * Client-side shopping cart implemented using browser `localStorage`.
-    * Add items to the cart.
-    * View cart items and total price.
-    * Update item quantity in the cart.
-    * Remove items from the cart.
-* **Development:**
-    * Built using Maven.
-    * Version controlled with Git and hosted on GitHub.
+### User Management
+* User registration and login
+* JWT-based authentication
+* Role-based access control (User/Admin roles)
+
+### Product Management
+* Admin panel for managing products
+* Image upload via Cloudinary integration
+* Product browsing for regular users
+
+### Shopping Cart
+* Add products to cart
+* Update product quantities
+* Remove products from cart
+* Item selection for checkout
+* Cart data persistence in localStorage
+
+### Order Processing
+* Create orders from cart items
+* Comprehensive order status management (PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED)
+* View order history and details
+* Order cancellation for users (when in PENDING or PROCESSING state)
+* Admin-only order status updates
+
+### Security
+* Protected admin routes
+* Secure API endpoints
+* JWT token verification
 
 ---
 
@@ -46,83 +54,159 @@ A full-stack web application demonstrating product browsing and a client-side sh
 
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
+![Spring Security](https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=spring-security&logoColor=white)
 ![Spring Data JPA](https://img.shields.io/badge/Spring_Data_JPA-6DB33F?style=for-the-badge&logo=spring&logoColor=white) 
 ![Hibernate](https://img.shields.io/badge/Hibernate-59666C?style=for-the-badge&logo=hibernate&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=json-web-tokens&logoColor=white)
+![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white)
 ![Maven](https://img.shields.io/badge/Maven-C71A36?style=for-the-badge&logo=apache-maven&logoColor=white)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
-![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
-![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
-![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white) 
+![Railway](https://img.shields.io/badge/Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white)
+![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white)
+
+---
+
+## Project Architecture
+
+### Backend Structure
+```
+com.dom_cheung.ecommerce_store/
+├── config/                  # Configuration classes
+│   ├── CloudinaryConfig.java
+│   ├── SecurityConfig.java
+│   └── ...
+├── controller/              # REST API controllers
+│   ├── AdminProductController.java
+│   ├── AuthController.java
+│   ├── OrderController.java
+│   ├── ProductController.java
+│   └── ...
+├── model/                   # Entity classes
+│   ├── CartItem.java
+│   ├── Order.java
+│   ├── OrderItem.java
+│   ├── OrderStatus.java
+│   ├── Product.java
+│   ├── User.java
+│   └── ...
+├── repository/              # Data access layer
+│   ├── OrderRepository.java
+│   ├── ProductRepository.java
+│   ├── UserRepository.java
+│   └── ...
+├── security/                # Security components
+│   └── JwtAuthenticationFilter.java
+├── service/                 # Business logic
+│   ├── AuthService.java
+│   ├── CloudinaryService.java
+│   ├── CustomUserDetailsService.java
+│   ├── OrderService.java
+│   └── ...
+└── EcommerceStoreApplication.java
+```
+
+### Frontend Structure
+```
+src/main/resources/static/
+├── css/                     # Stylesheet files
+├── js/                      # JavaScript files
+│   ├── cart.js              # Shopping cart functionality
+│   ├── common.js            # Common utility functions
+│   ├── checkout.js          # Checkout process
+│   └── ...
+├── images/                  # Image assets
+├── cart.html                # Shopping cart page
+├── checkout.html            # Checkout page
+├── index.html               # Product listing page
+├── login.html               # Login page
+├── product.html             # Product detail page
+└── ...
+```
+
 ---
 
 ## Setup and Run Locally
 
-Follow these steps to get the application running on your local machine.
-
 **Prerequisites:**
 
-* **Java Development Kit (JDK):** Version 17 or 21 installed.
-* **Apache Maven:** Installed and configured. 
-* **MySQL Server:** Running locally or accessible. 
-* **Git:** Installed.
+* **Java Development Kit (JDK):** Version 17 or higher
+* **Apache Maven:** Installed and configured
+* **PostgreSQL:** Running locally or accessible
+* **Cloudinary Account:** For image storage (optional)
+* **Git:** Installed
 
 **Steps:**
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/nortHades/simple_e-commerce_store.git
-    cd simple_e-commerce_store
-    ```
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/nortHades/simple_e-commerce_store.git
+   cd simple_e-commerce_store
+   ```
 
-2.  **Database Setup:**
-    * Ensure your MySQL server is running.
-    * Connect to MySQL using a client (e.g., MySQL Workbench, DBeaver, `mysql` command line).
-    * Create the database (if it doesn't exist):
-        ```sql
-        CREATE DATABASE simple_ecommerce_db; 
-        ```
-        *(Use the name you configured in `application.properties`, e.g., `simple_ecommerce_db`)*
-    * Open the `src/main/resources/application.properties` file.
-    * Verify/update the `spring.datasource.url`, `spring.datasource.username`, and `spring.datasource.password` properties to match your local MySQL setup.
+2. **Database Setup:**
+   * Ensure your PostgreSQL server is running
+   * Create a new database:
+     ```sql
+     CREATE DATABASE ecommerce_db;
+     ```
+   * Configure the database connection in `application.properties` or `application.yml`
 
-3.  **Build the Project:**
-    * Open a terminal or command prompt in the project's root directory.
-    * Run the Maven build command:
-        ```bash
-        mvn clean install 
-        ```
-       *(This compiles the code and downloads dependencies)*
+3. **Cloudinary Setup (for image upload functionality):**
+   * Sign up for a free Cloudinary account
+   * Set the `CLOUDINARY_URL` environment variable with your Cloudinary credentials
 
-4.  **Run the Application:**
-    * You can run the application using Maven:
-        ```bash
-        mvn spring-boot:run
-        ```
-    * Alternatively, you can run the main application class (`EcommerceStoreApplication.java`) directly from your IDE (like IntelliJ IDEA).
+4. **Build and Run:**
+   ```bash
+   mvn clean install
+   mvn spring-boot:run
+   ```
 
-5.  **Access the Application:**
-    * Once the application starts successfully (look for `Tomcat started on port(s): 8080`), open your web browser and navigate to:
-        `http://localhost:8080/`
+5. **Access the Application:**
+   * Open a web browser and navigate to: `http://localhost:8080/`
+   * Register for a new account to access customer features
 
 ---
 
-## API Endpoints (Optional)
+## API Endpoints
 
-The backend provides the following RESTful API endpoints for managing products:
+### Authentication
+* `POST /api/auth/register`: Register a new user
+* `POST /api/auth/login`: Authenticate user and receive JWT
 
-* `POST /api/products`: Creates a new product. (Requires JSON body)
-* `GET /api/products`: Retrieves a list of all products.
-* `GET /api/products/{id}`: Retrieves a single product by its ID.
-* `PUT /api/products/{id}`: Updates an existing product by its ID. (Requires JSON body)
-* `DELETE /api/products/{id}`: Deletes a product by its ID.
+### Products (Public)
+* `GET /api/products`: Get all products
+* `GET /api/products/{id}`: Get product by ID
+
+### Products (Admin only)
+* `POST /admin/products`: Create new product
+* `PUT /admin/products/{id}`: Update product
+* `DELETE /admin/products/{id}`: Delete product
+
+### Order Management
+* `POST /api/orders`: Create a new order
+* `GET /api/orders`: Get current user's orders
+* `GET /api/orders/{orderNumber}`: Get order details
+* `POST /api/orders/{orderNumber}/cancel`: Cancel an order (for users)
+* `POST /api/orders/{orderNumber}/status`: Update order status (Admin only)
+
+---
+
+## Future Enhancements
+
+* Inventory management system
+* Payment gateway integration
+* Server-side cart synchronization
+* Enhanced product search and filtering
+* User profile management
+* Frontend framework integration (React/Vue)
 
 ---
 
 ## Author
 
-* **Dong Zhang** - [Your GitHub Profile Link (e.g., https://github.com/nortHades)]
+* **Dong Zhang** - [nortHades](https://github.com/nortHades)
 
 ---
