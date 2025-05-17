@@ -10,15 +10,15 @@ A full-stack e-commerce web application with user authentication, product manage
 
 ## Screenshots
 
-![Register](https://res.cloudinary.com/drxo7i9dk/image/upload/w_1000,ar_16:9,c_fill,g_auto,e_sharpen/v1747458791/register_ttenl8.png)
+![Register](https://res.cloudinary.com/drxo7i9dk/image/upload/v1747458791/register_ttenl8.png)
 ![Login](https://res.cloudinary.com/drxo7i9dk/image/upload/w_1000,ar_16:9,c_fill,g_auto,e_sharpen/v1747458790/login_a18eyo.png)
 ![Main](https://res.cloudinary.com/drxo7i9dk/image/upload/w_1000,ar_16:9,c_fill,g_auto,e_sharpen/v1747458791/main_g1xans.png)
 ![Product Detail](https://res.cloudinary.com/drxo7i9dk/image/upload/w_1000,ar_16:9,c_fill,g_auto,e_sharpen/v1747458793/product-details_nqz5oz.png)
-![Cart](https://res.cloudinary.com/drxo7i9dk/image/upload/w_1000,ar_16:9,c_fill,g_auto,e_sharpen/v1747458790/cart_svtd6q.png)
-![Checkout](https://res.cloudinary.com/drxo7i9dk/image/upload/w_1000,ar_16:9,c_fill,g_auto,e_sharpen/v1747458790/checkout_zpcsom.png)
+![Cart](https://res.cloudinary.com/drxo7i9dk/image/upload/v1747458790/cart_svtd6q.png)
+![Checkout](https://res.cloudinary.com/drxo7i9dk/image/upload/v1747458790/checkout_zpcsom.png)
 ![Order Confirmation](https://res.cloudinary.com/drxo7i9dk/image/upload/w_1000,ar_16:9,c_fill,g_auto,e_sharpen/v1747458790/order-confirm_lfa3hw.png)
-![My Orders](https://res.cloudinary.com/drxo7i9dk/image/upload/w_1000,ar_16:9,c_fill,g_auto,e_sharpen/v1747458790/order_zas8y6.png)
-![Order Details](https://res.cloudinary.com/drxo7i9dk/image/upload/w_1000,ar_16:9,c_fill,g_auto,e_sharpen/v1747458791/order-details_bmy8qd.png)
+![My Orders](https://res.cloudinary.com/drxo7i9dk/image/upload/v1747458790/order_zas8y6.png)
+![Order Details](https://res.cloudinary.com/drxo7i9dk/image/upload/v1747458791/order-details_bmy8qd.png)
 
 ---
 
